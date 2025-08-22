@@ -12,12 +12,12 @@ export const getLayoutedElements = async () => {
     id: 'root',
     layoutOptions: {
       'elk.algorithm': 'force',
-      'elk.spacing.nodeNode': '80',
-      'elk.spacing.edgeNode': '50',
-      'elk.spacing.edgeEdge': '30',
+      'elk.spacing.nodeNode': '5',
+      // 'elk.spacing.edgeNode': '10',
+      // 'elk.spacing.edgeEdge': '100',
       'elk.force.iterations': '1000',
-      'elk.force.repulsion': '100',
-      'elk.force.gravity': '0.1',
+      'elk.force.repulsion': '50',
+      'elk.force.gravity': '0.3',
       'elk.force.quality': 'draft',
     },
     children: DATA.nodes.map((node) => ({
