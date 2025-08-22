@@ -9,10 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@dagrejs/dagre": "^1.1.4",
     "@xyflow/react": "^12.4.2",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "elkjs": "^0.10.0",
     "lucide-react": "^0.475.0",
     "next": "^15.1.7",
     "react": "^19.0.0",

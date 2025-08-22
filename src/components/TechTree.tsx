@@ -1,6 +1,6 @@
 'use client';
 
-import { getLayoutedElements } from '@/lib/dagrejs';
+import { getLayoutedElements } from '@/lib/elkjs';
 import { UiNode } from '@/lib/types';
 import {
   Background,
@@ -24,10 +24,14 @@ const TechTree: React.FC = () => {
   );
 
   useEffect(() => {
-    const { layoutedNodes, layoutedEdges } = getLayoutedElements('LR');
-    setNodes(() => layoutedNodes);
-    setEdges(() => layoutedEdges);
-    setIsLoading(false);
+    const loadLayout = async () => {
+      const { layoutedNodes, layoutedEdges } = await getLayoutedElements();
+      setNodes(() => layoutedNodes);
+      setEdges(() => layoutedEdges);
+      setIsLoading(false);
+    };
+
+    loadLayout();
   }, []);
 
   const onNodeClick = useCallback(
