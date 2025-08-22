@@ -15,16 +15,22 @@ export interface NodesAndEdges {
   edges: Edge[];
 }
 
-export const NODE_LABELS = ['Technology', 'Target'] as const;
+export const NODE_LABELS = [
+  'ReactorConcept',
+  'Milestone',
+  'EnablingTechnology',
+] as const;
 
 export type NodeLabel = (typeof NODE_LABELS)[number];
 
 export const LABEL_COLORS: Record<NodeLabel, string> = {
-  ['Technology']: 'blue-500',
-  ['Target']: 'green-500',
+  ['ReactorConcept']: 'blue-500',
+  ['Milestone']: 'green-500',
+  ['EnablingTechnology']: 'red-500',
 };
 
 export const LABEL_COLORS_VARIABLES: Record<NodeLabel, string> = {
-  ['Technology']: 'oklch(62.3% 0.214 259.815)',
-  ['Target']: 'oklch(72.3% 0.219 149.579)',
+  ['ReactorConcept']: 'oklch(62.3% 0.214 259.815)',
+  ['Milestone']: 'oklch(72.3% 0.219 149.579)',
+  ['EnablingTechnology']: 'oklch(0.637 0.237 25.331)',
 };

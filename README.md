@@ -9,7 +9,7 @@ All nodes and edges are inside [src/DATA.ts](src/DATA.ts). If you want to **add 
 To run this project locally:
 
 - Install Node.js (https://nodejs.org/en/download)
-- Create file tech-tree/.env.local & NEXT_PUBLIC_ENVIRONMENT=development
+- Create file investment-tech-tree/.env.local & NEXT_PUBLIC_ENVIRONMENT=development
 - npm i
 - npm run dev
-- You'll find the tech-tree on http://localhost:3000/tech-tre
+- You'll find the tech-tree on http://localhost:3000/investment-tech-tree
