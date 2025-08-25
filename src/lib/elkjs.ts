@@ -1,6 +1,6 @@
 import { DATA } from '@/DATA';
 import { LABEL_COLORS_VARIABLES, UiNode } from '@/lib/types';
-import { Position } from '@xyflow/react';
+import { MarkerType, Position } from '@xyflow/react';
 import ELK from 'elkjs/lib/elk.bundled.js';
 
 const elk = new ELK();
@@ -68,6 +68,14 @@ export const getLayoutedElements = async () => {
       id: `${edge.source}-${edge.target}`,
       sources: [edge.source],
       targets: [edge.target],
+              strokeWidth: 1,
+        stroke: '#374151',
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          width: 20,
+          height: 20,
+          color: '#374151',
+        },
     })),
   };
 

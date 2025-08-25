@@ -1,7 +1,7 @@
 'use client';
 
 import { getLayoutedElements } from '@/lib/elkjs';
-import { UiNode } from '@/lib/types';
+import { HighlightedElements, UiNode } from '@/lib/types';
 import {
   Background,
   BackgroundVariant,
@@ -24,10 +24,11 @@ const TechTree: React.FC = () => {
   const [selectedNode, setSelectedNode] = useState<UiNode | undefined>(
     undefined,
   );
-  const [highlightedElements, setHighlightedElements] = useState<{
-    nodeIds: Set<string>;
-    edgeIds: Set<string>;
-  }>({ nodeIds: new Set(), edgeIds: new Set() });
+  const [highlightedElements, setHighlightedElements] =
+    useState<HighlightedElements>({
+      nodeIds: new Set(),
+      edgeIds: new Set(),
+    });
 
   // Function to find connected nodes and edges
   const findConnectedElements = useCallback(
@@ -60,22 +61,8 @@ const TechTree: React.FC = () => {
   useEffect(() => {
     const loadLayout = async () => {
       const { layoutedNodes, layoutedEdges } = await getLayoutedElements();
-
-      // Add arrow markers to edges
-      const edgesWithArrows: Edge[] = layoutedEdges.map((edge) => ({
-        ...edge,
-        strokeWidth: 1,
-        stroke: '#374151',
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          width: 20,
-          height: 20,
-          color: '#374151',
-        },
-      }));
-
       setNodes(() => layoutedNodes);
-      setEdges(() => edgesWithArrows);
+      setEdges(() => layoutedEdges);
       setIsLoading(false);
     };
 

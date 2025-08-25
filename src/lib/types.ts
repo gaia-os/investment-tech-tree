@@ -15,6 +15,11 @@ export interface NodesAndEdges {
   edges: Edge[];
 }
 
+export interface HighlightedElements {
+  nodeIds: Set<string>;
+  edgeIds: Set<string>;
+}
+
 export const NODE_LABELS = [
   'ReactorConcept',
   'Milestone',
