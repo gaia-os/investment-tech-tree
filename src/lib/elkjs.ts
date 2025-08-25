@@ -8,7 +8,8 @@ const elk = new ELK();
 const nodeWidth = 172;
 const nodeHeight = 60;
 
-export const getLayoutedElements = async () => {
+
+export const getLayoutedElements: () => Promise<{ layoutedNodes: UiNode[]; layoutedEdges: Edge[] }> = async () => {
   const graph = {
     id: 'root',
     layoutOptions: {

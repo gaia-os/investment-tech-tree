@@ -11,6 +11,7 @@ import {
   MiniMap,
   Position,
   ReactFlow,
+  useReactFlow,
 } from '@xyflow/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Legend } from './Legend';
@@ -29,6 +30,7 @@ const TechTree: React.FC = () => {
       nodeIds: new Set(),
       edgeIds: new Set(),
     });
+  const { fitView } = useReactFlow();
 
   // Function to find connected nodes and edges
   const findConnectedElements = useCallback(
@@ -64,6 +66,7 @@ const TechTree: React.FC = () => {
       setNodes(() => layoutedNodes);
       setEdges(() => layoutedEdges);
       setIsLoading(false);
+      fitView();
     };
 
     loadLayout();
