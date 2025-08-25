@@ -5,16 +5,18 @@ import ELK from 'elkjs/lib/elk.bundled.js';
 
 const elk = new ELK();
 
-const nodeWidth = 172;
-const nodeHeight = 60;
+const nodeWidth = 150;
+const nodeHeight = 50;
 
-
-export const getLayoutedElements: () => Promise<{ layoutedNodes: UiNode[]; layoutedEdges: Edge[] }> = async () => {
+export const getLayoutedElements: () => Promise<{
+  layoutedNodes: UiNode[];
+  layoutedEdges: Edge[];
+}> = async () => {
   const graph = {
     id: 'root',
     layoutOptions: {
       'elk.algorithm': 'layered',
-      'elk.spacing.nodeNode': '10',
+      // 'elk.spacing.nodeNode': '10',
       'elk.layered.spacing.nodeNodeBetweenLayers': '100',
     },
     children: DATA.nodes.map((node) => ({
@@ -46,6 +48,10 @@ export const getLayoutedElements: () => Promise<{ layoutedNodes: UiNode[]; layou
         borderColor: `${LABEL_COLORS_VARIABLES[node.data.nodeLabel]}`,
         borderStyle: 'solid',
         borderRadius: '6px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
       },
     } as UiNode;
 

@@ -10,7 +10,7 @@ export type UiNode = Node<Record<string, unknown> & NodeProperties>;
 
 export type DataNode = Pick<UiNode, 'id' | 'data'>;
 
-export interface NodesAndEdges {
+export interface TechTree {
   nodes: DataNode[];
   edges: Edge[];
 }
@@ -39,3 +39,25 @@ export const LABEL_COLORS_VARIABLES: Record<NodeLabel, string> = {
   ['Milestone']: 'oklch(72.3% 0.219 149.579)',
   ['EnablingTechnology']: 'oklch(0.637 0.237 25.331)',
 };
+
+export interface InvestTechTreeNode {
+  id: string;
+  label: string;
+  type: NodeLabel;
+  category?: string;
+  subtype?: string;
+  trl_current?: string;
+  trl_projected_5_10_years?: string;
+}
+
+export interface InvestTechTreeEdge {
+  id: string;
+  source: string;
+  target?: string;
+  targets?: string[];
+}
+
+export interface InvestTechTreeGraph {
+  nodes: InvestTechTreeNode[];
+  edges: InvestTechTreeEdge[];
+}
