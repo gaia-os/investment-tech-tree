@@ -24,7 +24,34 @@ const NodeDetails = ({ selectedNode }: NodeDetailsProps) => {
             </span>
           </div>
           <div className="overflow-auto flex-grow">
-            <p className="p-2 w-full mt-2">{selectedNode.data.description}</p>
+            {typeof selectedNode.data.trl_current === 'string' && (
+              <div className="p-2 border-b border-gray-200 mt-2">
+                <h4 className="font-semibold text-sm text-gray-700 mb-1">
+                  TRL Current
+                </h4>
+                <p className="text-sm">{selectedNode.data.trl_current}</p>
+              </div>
+            )}
+
+            {typeof selectedNode.data.subtype === 'string' && (
+              <div className="p-2 border-b border-gray-200 mt-2">
+                <h4 className="font-semibold text-sm text-gray-700 mb-1">
+                  Subtype
+                </h4>
+                <p className="text-sm">{selectedNode.data.subtype}</p>
+              </div>
+            )}
+
+            {typeof selectedNode.data.trl_projected_5_10_years === 'string' && (
+              <div className="p-2 border-b border-gray-200 mt-2">
+                <h4 className="font-semibold text-sm text-gray-700 mb-1">
+                  TRL Projected (5-10 years)
+                </h4>
+                <p className="text-sm">
+                  {selectedNode.data.trl_projected_5_10_years}
+                </p>
+              </div>
+            )}
           </div>
         </>
       )}
