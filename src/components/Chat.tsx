@@ -214,13 +214,13 @@ const Chat = () => {
 
   const clearHistory = () => {
     setMessages([]);
-    setRequestCount(0);
-    setLastRequestTime(0);
-    setRateLimitExceeded(false);
+    // setRequestCount(0);
+    // setLastRequestTime(0);
+    // setRateLimitExceeded(false);
     localStorage.removeItem('tech-tree-chat-history');
     localStorage.removeItem('tech-tree-chat-scroll');
-    localStorage.removeItem('tech-tree-request-count');
-    localStorage.removeItem('tech-tree-last-request-time');
+    // localStorage.removeItem('tech-tree-request-count');
+    // localStorage.removeItem('tech-tree-last-request-time');
   };
 
   const saveScrollPosition = () => {
