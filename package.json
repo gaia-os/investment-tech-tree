@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@radix-ui/react-accordion": "^1.2.12",
     "@types/dompurify": "^3.0.5",
     "@xyflow/react": "^12.4.2",
     "clsx": "^2.1.1",

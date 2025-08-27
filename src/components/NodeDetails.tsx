@@ -2,6 +2,12 @@
 
 import { LABEL_COLORS, UiNode } from '@/lib/types';
 import { Manual } from './Manual';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 type NodeDetailsProps = { selectedNode?: UiNode };
 
@@ -54,13 +60,19 @@ const NodeDetails = ({ selectedNode }: NodeDetailsProps) => {
             )}
 
             {typeof selectedNode.data.detailedDescription === 'string' && (
-              <div className="p-2 border-b border-gray-200 mt-2">
-                <h4 className="font-semibold text-sm text-gray-700 mb-1">
-                  Description
-                </h4>
-                <p className="text-sm">
-                  {selectedNode.data.detailedDescription}
-                </p>
+              <div className="mt-2">
+                <Accordion type="single" collapsible>
+                  <AccordionItem value="description">
+                    <AccordionTrigger className="text-sm font-semibold text-gray-700">
+                      Description
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <p className="text-sm text-gray-600">
+                        {selectedNode.data.detailedDescription}
+                      </p>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </div>
             )}
           </div>
