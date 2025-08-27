@@ -14,7 +14,7 @@ interface TabPanelProps {
 type TabType = 'details' | 'chat';
 
 const TabPanel = ({ selectedNode, chatContext }: TabPanelProps) => {
-  const [activeTab, setActiveTab] = useState<TabType>('details');
+  const [activeTab, setActiveTab] = useState<TabType>('chat');
   const previousNodeIdRef = useRef<string | undefined>(undefined);
 
   // Switch to details tab when a new node is selected while chat is active
@@ -30,8 +30,8 @@ const TabPanel = ({ selectedNode, chatContext }: TabPanelProps) => {
   }, [selectedNode, activeTab]);
 
   const tabs = [
-    { id: 'details' as const, label: 'Node Details', icon: Info },
     { id: 'chat' as const, label: 'Chat', icon: MessageSquare },
+    { id: 'details' as const, label: 'Node Details', icon: Info },
   ];
 
   return (
