@@ -103,6 +103,7 @@ const Chat = () => {
       const response = await geminiClient.sendMessage(
         userMessage.content,
         DATA,
+        messages,
       );
 
       const assistantMessage: ChatMessage = {

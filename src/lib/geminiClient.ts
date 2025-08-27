@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { TechTree } from './types';
+import { TechTree, ChatMessage } from './types';
 
 export class GeminiChatClient {
   private genAI: GoogleGenerativeAI;
@@ -8,7 +8,11 @@ export class GeminiChatClient {
     this.genAI = new GoogleGenerativeAI(apiKey);
   }
 
-  async sendMessage(message: string, context: TechTree): Promise<string> {
+  async sendMessage(
+    message: string,
+    context: TechTree,
+    chatHistory: ChatMessage[] = [],
+  ): Promise<string> {
     if (!message?.trim()) {
       throw new Error('Message is required');
     }
@@ -60,13 +64,27 @@ IMPORTANT INSTRUCTIONS:
 
 Answer the user's question based on this information. Be precise, informative, and explain technical concepts in an understandable way. If relevant connections between different technologies exist, mention them.`;
 
+    // Build conversation history for context
+    const conversationHistory = chatHistory.map((msg) => ({
+      role: msg.type === 'user' ? 'user' : 'model',
+      parts: [{ text: msg.content }],
+    }));
+
+    // Create the content array with system prompt, conversation history, and current message
+    const contents = [
+      {
+        role: 'user',
+        parts: [{ text: systemPrompt }],
+      },
+      ...conversationHistory,
+      {
+        role: 'user',
+        parts: [{ text: message }],
+      },
+    ];
+
     const result = await model.generateContent({
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: systemPrompt + '\n\nUser Question: ' + message }],
-        },
-      ],
+      contents,
       generationConfig: {
         maxOutputTokens: 1000,
         temperature: 0.3,
