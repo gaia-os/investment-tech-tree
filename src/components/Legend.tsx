@@ -1,17 +1,24 @@
 'use client';
 
 import { LABEL_COLORS, NODE_LABELS } from '@/lib/types';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const Legend = () => {
   return (
-    <div className="absolute top-6 left-4 bg-white p-3 shadow-lg rounded-md">
-      <h4 className="font-bold mb-2">Legend</h4>
-      {NODE_LABELS.map((label) => (
-        <div key={label} className="flex items-center space-x-2 mt-1">
-          <span className={`w-4 h-4 rounded bg-${LABEL_COLORS[label]}`}></span>
-          <span>{label}</span>
-        </div>
-      ))}
-    </div>
+    <Card className="absolute top-6 left-4">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm font-bold">Legend</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-1">
+        {NODE_LABELS.map((label) => (
+          <div key={label} className="flex items-center space-x-2">
+            <span
+              className={`w-4 h-4 rounded bg-${LABEL_COLORS[label]}`}
+            ></span>
+            <span className="text-sm">{label}</span>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
   );
 };

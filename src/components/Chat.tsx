@@ -5,6 +5,10 @@ import { Send, Loader2, Trash2 } from 'lucide-react';
 import DOMPurify from 'dompurify';
 import { ChatMessage, ChatHistory, ChatContext } from '@/lib/types';
 import { GeminiChatClient } from '@/lib/geminiClient';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface ChatProps {
   context: ChatContext;
@@ -152,18 +156,20 @@ const Chat = ({ context }: ChatProps) => {
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Header */}
-      <div className="flex justify-between items-center p-4 border-b border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900">Tech Tree Chat</h3>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-lg font-semibold">Tech Tree Chat</CardTitle>
         {messages.length > 0 && (
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={clearHistory}
-            className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50"
             title="Clear Chat History"
           >
             <Trash2 size={18} />
-          </button>
+          </Button>
         )}
-      </div>
+      </CardHeader>
 
       {/* Messages */}
       <div
@@ -172,92 +178,104 @@ const Chat = ({ context }: ChatProps) => {
         onScroll={saveScrollPosition}
       >
         {messages.length === 0 ? (
-          <div className="text-center text-gray-500 mt-8">
-            <p className="text-lg mb-2">Ask anything about the Tech Tree:</p>
-            <ul className="text-sm text-left max-w-md mx-auto mt-2 space-y-1">
-              <li>
-                • What is the difference between Tokamaks and Stellarators?
-              </li>
-              <li>• Which technologies have the highest TRL?</li>
-              <li>• How does a Molten Salt Reactor work?</li>
-            </ul>
-          </div>
+          <Card>
+            <CardContent className="text-center text-gray-500 mt-8">
+              <p className="text-lg mb-2">Ask anything about the Tech Tree:</p>
+              <ul className="text-sm text-left max-w-md mx-auto mt-2 space-y-1">
+                <li>
+                  • What is the difference between Tokamaks and Stellarators?
+                </li>
+                <li>• Which technologies have the highest TRL?</li>
+                <li>• How does a Molten Salt Reactor work?</li>
+              </ul>
+            </CardContent>
+          </Card>
         ) : (
           messages.map((message) => (
             <div
               key={message.id}
               className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              <div
-                className={`max-w-[80%] rounded-lg p-3 ${
+              <Card
+                className={`max-w-[80%] ${
                   message.type === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-900 border pl-8'
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-gray-100 text-gray-900 border'
                 }`}
               >
-                <div className="break-words">
-                  {message.type === 'assistant' ? (
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: DOMPurify.sanitize(
-                          // Remove ```html and ``` markers from the response
-                          message.content
-                            .replace(/^```html\s*/i, '')
-                            .replace(/```[\s\n]*$/, ''),
-                          {
-                            ALLOWED_TAGS: [
-                              'h2',
-                              'h3',
-                              'h4',
-                              'p',
-                              'ul',
-                              'ol',
-                              'li',
-                              'strong',
-                              'em',
-                              'table',
-                              'thead',
-                              'tbody',
-                              'tr',
-                              'td',
-                              'th',
-                              'code',
-                              'pre',
-                              'br',
-                            ],
-                            ALLOWED_ATTR: ['class'],
-                          },
-                        ),
-                      }}
-                      className="prose prose-sm max-w-none"
-                    />
-                  ) : (
-                    <div className="whitespace-pre-wrap">{message.content}</div>
-                  )}
-                </div>
-                <div
-                  className={`text-xs mt-2 ${
-                    message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
-                  }`}
+                <CardContent
+                  className={`p-4 ${message.type === 'user' ? 'p-3' : 'p-4 pl-6'}`}
                 >
-                  {new Date(message.timestamp).toLocaleTimeString('de-DE', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </div>
-              </div>
+                  <div className="break-words">
+                    {message.type === 'assistant' ? (
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(
+                            // Remove ```html and ``` markers from the response
+                            message.content
+                              .replace(/^```html\s*/i, '')
+                              .replace(/```[\s\n]*$/, ''),
+                            {
+                              ALLOWED_TAGS: [
+                                'h2',
+                                'h3',
+                                'h4',
+                                'p',
+                                'ul',
+                                'ol',
+                                'li',
+                                'strong',
+                                'em',
+                                'table',
+                                'thead',
+                                'tbody',
+                                'tr',
+                                'td',
+                                'th',
+                                'code',
+                                'pre',
+                                'br',
+                              ],
+                              ALLOWED_ATTR: ['class'],
+                            },
+                          ),
+                        }}
+                        className="prose prose-sm max-w-none"
+                      />
+                    ) : (
+                      <div className="whitespace-pre-wrap">
+                        {message.content}
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    className={`text-xs mt-2 ${
+                      message.type === 'user'
+                        ? 'text-blue-100'
+                        : 'text-gray-500'
+                    }`}
+                  >
+                    {new Date(message.timestamp).toLocaleTimeString('de-DE', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           ))
         )}
 
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-gray-100 rounded-lg p-3 border">
-              <div className="flex items-center space-x-2">
-                <Loader2 size={16} className="animate-spin text-gray-500" />
-                <span className="text-gray-500">Thinking...</span>
-              </div>
-            </div>
+            <Card className="bg-gray-100 border">
+              <CardContent className="p-3">
+                <div className="flex items-center space-x-2">
+                  <Loader2 size={16} className="animate-spin text-gray-500" />
+                  <span className="text-gray-500">Thinking...</span>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
 
@@ -268,23 +286,24 @@ const Chat = ({ context }: ChatProps) => {
       <div className="border-t border-gray-200 p-4">
         <form onSubmit={handleSubmit} className="flex space-x-2">
           <div className="flex-1 relative">
-            <textarea
+            <Textarea
               ref={textareaRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Ask a question about the Tech Tree..."
-              className="w-full resize-none border border-gray-300 rounded-lg px-3 py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent max-h-32"
+              className="w-full resize-none pr-12 max-h-32"
               rows={1}
               disabled={isLoading}
             />
-            <button
+            <Button
               type="submit"
+              size="sm"
               disabled={!input.trim() || isLoading || !geminiClient}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-blue-600 hover:text-blue-700 disabled:text-gray-400 disabled:cursor-not-allowed"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 h-8 w-8"
             >
               <Send size={18} />
-            </button>
+            </Button>
           </div>
         </form>
         <p className="text-xs text-gray-500 mt-2">
