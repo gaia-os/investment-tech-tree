@@ -69,7 +69,7 @@ const TechTree: React.FC = () => {
     };
 
     loadLayout();
-  }, []);
+  }, [fitView]);
 
   // Update node and edge styles based on highlighted elements
   useEffect(() => {
@@ -168,7 +168,7 @@ const TechTree: React.FC = () => {
 
   return (
     <div className="w-full h-screen bg-gray-100 flex">
-      <div className="w-3/4 relative">
+      <div className="w-2/4 relative">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -191,7 +191,7 @@ const TechTree: React.FC = () => {
         </ReactFlow>
         <Legend />
       </div>
-      <div className="w-1/4 bg-white shadow-lg">
+      <div className="w-2/4 bg-white shadow-lg">
         <TabPanel selectedNode={selectedNode} chatContext={chatContext} />
       </div>
     </div>

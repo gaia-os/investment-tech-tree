@@ -18,6 +18,7 @@ const Chat = ({ context }: ChatProps) => {
     null,
   );
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Initialize Gemini client
@@ -37,6 +38,19 @@ const Chat = ({ context }: ChatProps) => {
       if (savedHistory) {
         const history: ChatHistory = JSON.parse(savedHistory);
         setMessages(history.messages);
+
+        // Restore scroll position after messages are loaded
+        setTimeout(() => {
+          const savedScrollPosition = localStorage.getItem(
+            'tech-tree-chat-scroll',
+          );
+          if (savedScrollPosition && messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTop = parseInt(
+              savedScrollPosition,
+              10,
+            );
+          }
+        }, 100);
       }
     } catch (error) {
       console.error('Error loading chat history:', error);
@@ -104,7 +118,7 @@ const Chat = ({ context }: ChatProps) => {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
         content:
-          'Entschuldigung, es gab einen Fehler bei der Verarbeitung Ihrer Anfrage. Bitte versuchen Sie es erneut.',
+          'Sorry, there was an error processing your request. Please try again.',
         timestamp: Date.now(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -116,6 +130,16 @@ const Chat = ({ context }: ChatProps) => {
   const clearHistory = () => {
     setMessages([]);
     localStorage.removeItem('tech-tree-chat-history');
+    localStorage.removeItem('tech-tree-chat-scroll');
+  };
+
+  const saveScrollPosition = () => {
+    if (messagesContainerRef.current) {
+      localStorage.setItem(
+        'tech-tree-chat-scroll',
+        messagesContainerRef.current.scrollTop.toString(),
+      );
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -134,7 +158,7 @@ const Chat = ({ context }: ChatProps) => {
           <button
             onClick={clearHistory}
             className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-            title="Chat-Verlauf löschen"
+            title="Clear Chat History"
           >
             <Trash2 size={18} />
           </button>
@@ -142,18 +166,20 @@ const Chat = ({ context }: ChatProps) => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto p-4 space-y-4"
+        onScroll={saveScrollPosition}
+      >
         {messages.length === 0 ? (
           <div className="text-center text-gray-500 mt-8">
-            <p className="text-lg mb-2">👋 Hallo!</p>
-            <p>Stellen Sie Fragen zum Investment Tech Tree.</p>
-            <p className="text-sm mt-4">Beispiele:</p>
+            <p className="text-lg mb-2">Ask anything about the Tech Tree:</p>
             <ul className="text-sm text-left max-w-md mx-auto mt-2 space-y-1">
               <li>
-                • Was ist der Unterschied zwischen Tokamaks und Stellaratoren?
+                • What is the difference between Tokamaks and Stellarators?
               </li>
-              <li>• Welche Technologien haben das höchste TRL?</li>
-              <li>• Wie funktioniert ein Molten Salt Reactor?</li>
+              <li>• Which technologies have the highest TRL?</li>
+              <li>• How does a Molten Salt Reactor work?</li>
             </ul>
           </div>
         ) : (
@@ -173,29 +199,35 @@ const Chat = ({ context }: ChatProps) => {
                   {message.type === 'assistant' ? (
                     <div
                       dangerouslySetInnerHTML={{
-                        __html: DOMPurify.sanitize(message.content, {
-                          ALLOWED_TAGS: [
-                            'h2',
-                            'h3',
-                            'h4',
-                            'p',
-                            'ul',
-                            'ol',
-                            'li',
-                            'strong',
-                            'em',
-                            'table',
-                            'thead',
-                            'tbody',
-                            'tr',
-                            'td',
-                            'th',
-                            'code',
-                            'pre',
-                            'br',
-                          ],
-                          ALLOWED_ATTR: ['class'],
-                        }),
+                        __html: DOMPurify.sanitize(
+                          // Remove ```html and ``` markers from the response
+                          message.content
+                            .replace(/^```html\s*/i, '')
+                            .replace(/\s*```$/, ''),
+                          {
+                            ALLOWED_TAGS: [
+                              'h2',
+                              'h3',
+                              'h4',
+                              'p',
+                              'ul',
+                              'ol',
+                              'li',
+                              'strong',
+                              'em',
+                              'table',
+                              'thead',
+                              'tbody',
+                              'tr',
+                              'td',
+                              'th',
+                              'code',
+                              'pre',
+                              'br',
+                            ],
+                            ALLOWED_ATTR: ['class'],
+                          },
+                        ),
                       }}
                       className="prose prose-sm max-w-none"
                     />
@@ -223,7 +255,7 @@ const Chat = ({ context }: ChatProps) => {
             <div className="bg-gray-100 rounded-lg p-3 border">
               <div className="flex items-center space-x-2">
                 <Loader2 size={16} className="animate-spin text-gray-500" />
-                <span className="text-gray-500">Denke nach...</span>
+                <span className="text-gray-500">Thinking...</span>
               </div>
             </div>
           </div>
@@ -241,7 +273,7 @@ const Chat = ({ context }: ChatProps) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Stellen Sie eine Frage über den Tech Tree..."
+              placeholder="Ask a question about the Tech Tree..."
               className="w-full resize-none border border-gray-300 rounded-lg px-3 py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent max-h-32"
               rows={1}
               disabled={isLoading}
@@ -256,7 +288,7 @@ const Chat = ({ context }: ChatProps) => {
           </div>
         </form>
         <p className="text-xs text-gray-500 mt-2">
-          Drücken Sie Enter zum Senden, Shift+Enter für neue Zeile
+          Press Enter to send, Shift+Enter for new line
         </p>
       </div>
     </div>

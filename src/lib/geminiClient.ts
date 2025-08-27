@@ -49,7 +49,7 @@ ${edgesContext}${currentNodeContext}
 IMPORTANT INSTRUCTIONS:
 - Answer in a concise, focused manner - avoid overly comprehensive responses
 - Structure your answer with clear HTML headlines (h2, h3, h4) using Tailwind CSS classes
-- Format your response as well-structured HTML using Tailwind CSS classes as used in this project
+- Format your response as well-structured HTML using Tailwind CSS classes
 - Use appropriate HTML elements for better readability:
   * Tables with Tailwind styling for data comparison
   * Bullet points (ul/li) or numbered lists (ol/li) where appropriate
@@ -68,7 +68,7 @@ Answer the user's question based on this information. Be precise, informative, a
       contents: [
         {
           role: 'user',
-          parts: [{ text: systemPrompt + '\n\nBenutzer Frage: ' + message }],
+          parts: [{ text: systemPrompt + '\n\nUser Question: ' + message }],
         },
       ],
       generationConfig: {

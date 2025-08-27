@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MessageSquare, Info } from 'lucide-react';
 import NodeDetails from './NodeDetails';
 import Chat from './Chat';
@@ -15,6 +15,19 @@ type TabType = 'details' | 'chat';
 
 const TabPanel = ({ selectedNode, chatContext }: TabPanelProps) => {
   const [activeTab, setActiveTab] = useState<TabType>('details');
+  const previousNodeIdRef = useRef<string | undefined>(undefined);
+
+  // Switch to details tab when a new node is selected while chat is active
+  useEffect(() => {
+    if (
+      selectedNode &&
+      activeTab === 'chat' &&
+      previousNodeIdRef.current !== selectedNode.id
+    ) {
+      setActiveTab('details');
+    }
+    previousNodeIdRef.current = selectedNode?.id;
+  }, [selectedNode, activeTab]);
 
   const tabs = [
     { id: 'details' as const, label: 'Node Details', icon: Info },
