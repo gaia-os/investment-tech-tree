@@ -11,6 +11,19 @@ import {
 
 type NodeDetailsProps = { selectedNode?: UiNode };
 
+// Utility function to add line breaks after every 3-4 sentences
+const formatTextWithBreaks = (text: string): string => {
+  const sentences = text.split(/(?<=[.!?])\s+/);
+  const formattedParagraphs: string[] = [];
+
+  for (let i = 0; i < sentences.length; i += 3) {
+    const paragraph = sentences.slice(i, i + 3).join(' ');
+    formattedParagraphs.push(paragraph);
+  }
+
+  return formattedParagraphs.join('\n\n');
+};
+
 const NodeDetails = ({ selectedNode }: NodeDetailsProps) => {
   if (!selectedNode) return <Manual />;
 
@@ -67,8 +80,10 @@ const NodeDetails = ({ selectedNode }: NodeDetailsProps) => {
                       Description
                     </AccordionTrigger>
                     <AccordionContent>
-                      <p className="text-sm text-gray-600">
-                        {selectedNode.data.detailedDescription}
+                      <p className="text-sm text-gray-600 whitespace-pre-line">
+                        {formatTextWithBreaks(
+                          selectedNode.data.detailedDescription,
+                        )}
                       </p>
                     </AccordionContent>
                   </AccordionItem>
