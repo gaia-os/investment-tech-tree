@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Send, Loader2, Trash2 } from 'lucide-react';
+import DOMPurify from 'dompurify';
 import { ChatMessage, ChatHistory, ChatContext } from '@/lib/types';
 import { GeminiChatClient } from '@/lib/geminiClient';
 
@@ -57,9 +58,15 @@ const Chat = ({ context }: ChatProps) => {
     }
   }, [messages]);
 
-  // Auto-scroll to bottom when new messages are added
+  // Auto-scroll to bottom only when user sends a message
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Only scroll if the last message is from the user or if it's the first message
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage.type === 'user') {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   }, [messages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -162,8 +169,39 @@ const Chat = ({ context }: ChatProps) => {
                     : 'bg-gray-100 text-gray-900 border'
                 }`}
               >
-                <div className="whitespace-pre-wrap break-words">
-                  {message.content}
+                <div className="break-words">
+                  {message.type === 'assistant' ? (
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(message.content, {
+                          ALLOWED_TAGS: [
+                            'h2',
+                            'h3',
+                            'h4',
+                            'p',
+                            'ul',
+                            'ol',
+                            'li',
+                            'strong',
+                            'em',
+                            'table',
+                            'thead',
+                            'tbody',
+                            'tr',
+                            'td',
+                            'th',
+                            'code',
+                            'pre',
+                            'br',
+                          ],
+                          ALLOWED_ATTR: ['class'],
+                        }),
+                      }}
+                      className="prose prose-sm max-w-none"
+                    />
+                  ) : (
+                    <div className="whitespace-pre-wrap">{message.content}</div>
+                  )}
                 </div>
                 <div
                   className={`text-xs mt-2 ${
