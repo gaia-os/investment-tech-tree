@@ -76,21 +76,3 @@ export interface ChatHistory {
   messages: ChatMessage[];
   lastUpdated: number;
 }
-
-export interface ChatContext {
-  nodes: Array<{
-    id: string;
-    label: string;
-    type: string;
-    description?: string;
-    detailedDescription?: string;
-    category?: string;
-    trl_current?: string;
-    [key: string]: unknown;
-  }>;
-  edges: Array<{
-    id: string;
-    source: string;
-    target: string;
-  }>;
-}

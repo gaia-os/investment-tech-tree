@@ -4,17 +4,16 @@ import { useState, useEffect, useRef } from 'react';
 import { MessageSquare, Info } from 'lucide-react';
 import NodeDetails from './NodeDetails';
 import Chat from './Chat';
-import { UiNode, ChatContext } from '@/lib/types';
+import { UiNode } from '@/lib/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface TabPanelProps {
   selectedNode?: UiNode;
-  chatContext: ChatContext;
 }
 
 type TabType = 'details' | 'chat';
 
-const TabPanel = ({ selectedNode, chatContext }: TabPanelProps) => {
+const TabPanel = ({ selectedNode }: TabPanelProps) => {
   const [activeTab, setActiveTab] = useState<TabType>('chat');
   const previousNodeIdRef = useRef<string | undefined>(undefined);
 
@@ -49,7 +48,7 @@ const TabPanel = ({ selectedNode, chatContext }: TabPanelProps) => {
         </TabsList>
 
         <TabsContent value="chat" className="flex-1 overflow-hidden mt-0">
-          <Chat context={chatContext} />
+          <Chat />
         </TabsContent>
 
         <TabsContent value="details" className="flex-1 overflow-hidden mt-0">

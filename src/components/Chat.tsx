@@ -3,18 +3,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { Send, Loader2, Trash2 } from 'lucide-react';
 import DOMPurify from 'dompurify';
-import { ChatMessage, ChatHistory, ChatContext } from '@/lib/types';
+import { ChatMessage, ChatHistory } from '@/lib/types';
+import { DATA } from '@/DATA';
 import { GeminiChatClient } from '@/lib/geminiClient';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-interface ChatProps {
-  context: ChatContext;
-}
-
-const Chat = ({ context }: ChatProps) => {
+const Chat = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -105,7 +101,7 @@ const Chat = ({ context }: ChatProps) => {
     try {
       const response = await geminiClient.sendMessage(
         userMessage.content,
-        context,
+        DATA,
       );
 
       const assistantMessage: ChatMessage = {

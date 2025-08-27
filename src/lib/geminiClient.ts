@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { ChatContext } from './types';
+import { TechTree } from './types';
 
 export class GeminiChatClient {
   private genAI: GoogleGenerativeAI;
@@ -8,7 +8,7 @@ export class GeminiChatClient {
     this.genAI = new GoogleGenerativeAI(apiKey);
   }
 
-  async sendMessage(message: string, context: ChatContext): Promise<string> {
+  async sendMessage(message: string, context: TechTree): Promise<string> {
     if (!message?.trim()) {
       throw new Error('Message is required');
     }
@@ -18,11 +18,11 @@ export class GeminiChatClient {
     // Build context string from nodes and edges
     const nodesContext = context.nodes
       .map((node) => {
-        return `Node: ${node.label} (${node.type})
+        return `Node: ${node.data.label} (${node.data.nodeLabel})
       - ID: ${node.id}
-      - Category: ${node.category || 'N/A'}
-      - TRL Current: ${node.trl_current || 'N/A'}
-      - Description: ${node.detailedDescription || node.description || 'No description available'}`;
+      - Category: ${node.data.category || 'N/A'}
+      - TRL Current: ${node.data.trl_current || 'N/A'}
+      - Description: ${node.data.detailedDescription || node.data.description || 'No description available'}`;
       })
       .join('\n\n');
 
@@ -68,8 +68,8 @@ Answer the user's question based on this information. Be precise, informative, a
         },
       ],
       generationConfig: {
-        maxOutputTokens: 2000,
-        temperature: 0.7,
+        maxOutputTokens: 1000,
+        temperature: 0.3,
       },
     });
 

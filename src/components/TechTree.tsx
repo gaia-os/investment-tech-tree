@@ -1,7 +1,7 @@
 'use client';
 
 import { getLayoutedElements } from '@/lib/elkjs';
-import { HighlightedElements, UiNode, ChatContext } from '@/lib/types';
+import { HighlightedElements, UiNode } from '@/lib/types';
 import {
   Background,
   BackgroundVariant,
@@ -11,7 +11,7 @@ import {
   ReactFlow,
   useReactFlow,
 } from '@xyflow/react';
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Legend } from './Legend';
 import { LoadingSpinner } from './LoadingSpinner';
 import TabPanel from './TabPanel';
@@ -122,35 +122,6 @@ const TechTree: React.FC = () => {
     [selectedNode, setSelectedNode, findConnectedElements, edges],
   );
 
-  // Create chat context
-  const chatContext: ChatContext = useMemo(() => {
-    return {
-      nodes: nodes.map((node) => ({
-        id: node.id,
-        label: node.data.label,
-        type: node.data.nodeLabel,
-        description: node.data.description,
-        detailedDescription: node.data.detailedDescription,
-        ...Object.fromEntries(
-          Object.entries(node.data).filter(
-            ([key]) =>
-              ![
-                'label',
-                'nodeLabel',
-                'description',
-                'detailedDescription',
-              ].includes(key),
-          ),
-        ),
-      })),
-      edges: edges.map((edge) => ({
-        id: edge.id,
-        source: edge.source,
-        target: edge.target,
-      })),
-    };
-  }, [nodes, edges]);
-
   if (isLoading) return <LoadingSpinner />;
 
   return (
@@ -179,7 +150,7 @@ const TechTree: React.FC = () => {
         <Legend />
       </div>
       <div className="w-2/4 bg-white shadow-lg">
-        <TabPanel selectedNode={selectedNode} chatContext={chatContext} />
+        <TabPanel selectedNode={selectedNode} />
       </div>
     </div>
   );
