@@ -32,10 +32,6 @@ export class GeminiChatClient {
       })
       .join('\n');
 
-    const currentNodeContext = context.currentNode
-      ? `\n\nCurrently selected node: ${context.currentNode.label} (${context.currentNode.type})`
-      : '';
-
     const systemPrompt = `You are an expert in nuclear and fusion technologies. You help users answer questions about an Investment Tech Tree that covers various reactor concepts, milestones, and enabling technologies.
 
 Here is the current Tech Tree context:
@@ -44,7 +40,7 @@ NODES:
 ${nodesContext}
 
 EDGES (Dependencies):
-${edgesContext}${currentNodeContext}
+${edgesContext}
 
 IMPORTANT INSTRUCTIONS:
 - Answer in a concise, focused manner - avoid overly comprehensive responses

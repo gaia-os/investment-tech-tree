@@ -8,7 +8,6 @@ import {
   Controls,
   Edge,
   MarkerType,
-  MiniMap,
   ReactFlow,
   useReactFlow,
 } from '@xyflow/react';
@@ -149,20 +148,8 @@ const TechTree: React.FC = () => {
         source: edge.source,
         target: edge.target,
       })),
-      currentNode: selectedNode
-        ? {
-            id: selectedNode.id,
-            label: selectedNode.data.label,
-            type: selectedNode.data.nodeLabel,
-            ...Object.fromEntries(
-              Object.entries(selectedNode.data).filter(
-                ([key]) => !['label', 'nodeLabel'].includes(key),
-              ),
-            ),
-          }
-        : undefined,
     };
-  }, [nodes, edges, selectedNode]);
+  }, [nodes, edges]);
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -186,7 +173,7 @@ const TechTree: React.FC = () => {
           minZoom={0.3}
         >
           <Background bgColor="white" variant={BackgroundVariant.Dots} />
-          <MiniMap />
+          {/* <MiniMap /> */}
           <Controls showInteractive={false} />
         </ReactFlow>
         <Legend />

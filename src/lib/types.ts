@@ -93,10 +93,4 @@ export interface ChatContext {
     source: string;
     target: string;
   }>;
-  currentNode?: {
-    id: string;
-    label: string;
-    type: string;
-    [key: string]: unknown;
-  };
 }

@@ -192,7 +192,7 @@ const Chat = ({ context }: ChatProps) => {
                 className={`max-w-[80%] rounded-lg p-3 ${
                   message.type === 'user'
                     ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-900 border'
+                    : 'bg-gray-100 text-gray-900 border pl-8'
                 }`}
               >
                 <div className="break-words">
@@ -203,7 +203,7 @@ const Chat = ({ context }: ChatProps) => {
                           // Remove ```html and ``` markers from the response
                           message.content
                             .replace(/^```html\s*/i, '')
-                            .replace(/\s*```$/, ''),
+                            .replace(/```[\s\n]*$/, ''),
                           {
                             ALLOWED_TAGS: [
                               'h2',
