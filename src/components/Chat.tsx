@@ -9,6 +9,7 @@ import { GeminiChatClient } from '@/lib/geminiClient';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const Chat = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -149,6 +150,14 @@ const Chat = () => {
     }
   };
 
+  const handleSuggestedQuestion = (question: string) => {
+    setInput(question);
+    // Focus the textarea after setting the input
+    setTimeout(() => {
+      textareaRef.current?.focus();
+    }, 0);
+  };
+
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Header */}
@@ -176,14 +185,51 @@ const Chat = () => {
         {messages.length === 0 ? (
           <Card>
             <CardContent className="text-center text-gray-500 mt-8">
-              <p className="text-lg mb-2">Ask anything about the Tech Tree:</p>
-              <ul className="text-sm text-left max-w-md mx-auto mt-2 space-y-1">
-                <li>
-                  • What is the difference between Tokamaks and Stellarators?
-                </li>
-                <li>• Which technologies have the highest TRL?</li>
-                <li>• How does a Molten Salt Reactor work?</li>
-              </ul>
+              <p className="text-lg mb-4">Ask anything about the Tech Tree:</p>
+              <div className="flex flex-wrap gap-2 justify-center max-w-md mx-auto">
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer hover:bg-gray-100 transition-colors"
+                  onClick={() =>
+                    handleSuggestedQuestion('What is this Tech Tree about?')
+                  }
+                >
+                  Explanation of Tech Tree
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer hover:bg-gray-100 transition-colors"
+                  onClick={() =>
+                    handleSuggestedQuestion(
+                      'What are the enabling technologies with the highest impact?',
+                    )
+                  }
+                >
+                  Highest Impact
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer hover:bg-gray-100 transition-colors"
+                  onClick={() =>
+                    handleSuggestedQuestion(
+                      'Which technologies have the highest TRL?',
+                    )
+                  }
+                >
+                  Highest TRL Technologies
+                </Badge>
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer hover:bg-gray-100 transition-colors"
+                  onClick={() =>
+                    handleSuggestedQuestion(
+                      'What are the most promising investments?',
+                    )
+                  }
+                >
+                  Investment Opportunities
+                </Badge>
+              </div>
             </CardContent>
           </Card>
         ) : (
@@ -195,7 +241,7 @@ const Chat = () => {
               <Card
                 className={`max-w-[80%] ${
                   message.type === 'user'
-                    ? 'bg-blue-600 text-white border-blue-600'
+                    ? 'bg-slate-600 text-white border-slate-600'
                     : 'bg-gray-100 text-gray-900 border'
                 }`}
               >
@@ -247,7 +293,7 @@ const Chat = () => {
                   <div
                     className={`text-xs mt-2 ${
                       message.type === 'user'
-                        ? 'text-blue-100'
+                        ? 'text-slate-100'
                         : 'text-gray-500'
                     }`}
                   >
