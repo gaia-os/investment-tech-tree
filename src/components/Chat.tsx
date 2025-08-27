@@ -282,7 +282,7 @@ const Chat = () => {
                             },
                           ),
                         }}
-                        className="prose prose-sm max-w-none"
+                        className="prose prose-sm max-w-none [&_table]:overflow-x-auto [&_table]:block [&_table]:w-full [&_table]:border-collapse [&_table]:border [&_table]:border-gray-300 [&_td]:border [&_td]:border-gray-300 [&_td]:px-3 [&_td]:py-2 [&_td]:whitespace-nowrap [&_th]:border [&_th]:border-gray-300 [&_th]:px-3 [&_th]:py-2 [&_th]:bg-gray-50 [&_th]:font-semibold [&_th]:text-left [&_h3]:mt-3 [&_h3]:mb-1 [&_h3]:font-semibold"
                       />
                     ) : (
                       <div className="whitespace-pre-wrap">
