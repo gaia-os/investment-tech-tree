@@ -52,6 +52,17 @@ const NodeDetails = ({ selectedNode }: NodeDetailsProps) => {
                 </p>
               </div>
             )}
+
+            {typeof selectedNode.data.detailedDescription === 'string' && (
+              <div className="p-2 border-b border-gray-200 mt-2">
+                <h4 className="font-semibold text-sm text-gray-700 mb-1">
+                  Description
+                </h4>
+                <p className="text-sm">
+                  {selectedNode.data.detailedDescription}
+                </p>
+              </div>
+            )}
           </div>
         </>
       )}

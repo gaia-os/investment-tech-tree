@@ -1,7 +1,7 @@
 'use client';
 
 import { getLayoutedElements } from '@/lib/elkjs';
-import { HighlightedElements, UiNode } from '@/lib/types';
+import { HighlightedElements, UiNode, ChatContext } from '@/lib/types';
 import {
   Background,
   BackgroundVariant,
@@ -12,10 +12,10 @@ import {
   ReactFlow,
   useReactFlow,
 } from '@xyflow/react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { Legend } from './Legend';
 import { LoadingSpinner } from './LoadingSpinner';
-import NodeDetails from './NodeDetails';
+import TabPanel from './TabPanel';
 
 const TechTree: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -123,6 +123,47 @@ const TechTree: React.FC = () => {
     [selectedNode, setSelectedNode, findConnectedElements, edges],
   );
 
+  // Create chat context
+  const chatContext: ChatContext = useMemo(() => {
+    return {
+      nodes: nodes.map((node) => ({
+        id: node.id,
+        label: node.data.label,
+        type: node.data.nodeLabel,
+        description: node.data.description,
+        detailedDescription: node.data.detailedDescription,
+        ...Object.fromEntries(
+          Object.entries(node.data).filter(
+            ([key]) =>
+              ![
+                'label',
+                'nodeLabel',
+                'description',
+                'detailedDescription',
+              ].includes(key),
+          ),
+        ),
+      })),
+      edges: edges.map((edge) => ({
+        id: edge.id,
+        source: edge.source,
+        target: edge.target,
+      })),
+      currentNode: selectedNode
+        ? {
+            id: selectedNode.id,
+            label: selectedNode.data.label,
+            type: selectedNode.data.nodeLabel,
+            ...Object.fromEntries(
+              Object.entries(selectedNode.data).filter(
+                ([key]) => !['label', 'nodeLabel'].includes(key),
+              ),
+            ),
+          }
+        : undefined,
+    };
+  }, [nodes, edges, selectedNode]);
+
   if (isLoading) return <LoadingSpinner />;
 
   return (
@@ -150,11 +191,9 @@ const TechTree: React.FC = () => {
         </ReactFlow>
         <Legend />
       </div>
-      {
-        <div className="w-1/4 p-4 bg-white shadow-lg">
-          <NodeDetails selectedNode={selectedNode} />
-        </div>
-      }
+      <div className="w-1/4 bg-white shadow-lg">
+        <TabPanel selectedNode={selectedNode} chatContext={chatContext} />
+      </div>
     </div>
   );
 };

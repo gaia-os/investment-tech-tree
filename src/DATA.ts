@@ -1,4 +1,5 @@
 import { NodeLabel, TechTree, InvestTechTreeGraph } from './lib/types';
+import { nodeDescriptions } from './lib/nodeDescriptions';
 
 const tech_tree: InvestTechTreeGraph = {
   nodes: [
@@ -552,6 +553,9 @@ export const DATA: TechTree = {
       label: n.label,
       nodeLabel: n.type as NodeLabel,
       description: n.label,
+      detailedDescription:
+        nodeDescriptions[n.id] ||
+        `${n.label} - Detailed description pending research and development.`,
       ...Object.fromEntries(
         Object.entries(n).filter(([k]) => !['id', 'label', 'type'].includes(k)),
       ),
