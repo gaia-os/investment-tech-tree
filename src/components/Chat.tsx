@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Send, Loader2, Trash2 } from 'lucide-react';
 import { ChatMessage, ChatHistory, ChatContext } from '@/lib/types';
+import { GeminiChatClient } from '@/lib/geminiClient';
 
 interface ChatProps {
   context: ChatContext;
@@ -12,8 +13,21 @@ const Chat = ({ context }: ChatProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [geminiClient, setGeminiClient] = useState<GeminiChatClient | null>(
+    null,
+  );
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Initialize Gemini client
+  useEffect(() => {
+    const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    if (apiKey) {
+      setGeminiClient(new GeminiChatClient(apiKey));
+    } else {
+      console.error('NEXT_PUBLIC_GEMINI_API_KEY is not set');
+    }
+  }, []);
 
   // Load chat history from localStorage on mount
   useEffect(() => {
@@ -50,7 +64,7 @@ const Chat = ({ context }: ChatProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || !geminiClient) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -64,27 +78,15 @@ const Chat = ({ context }: ChatProps) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: userMessage.content,
-          context,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to get response');
-      }
-
-      const data = await response.json();
+      const response = await geminiClient.sendMessage(
+        userMessage.content,
+        context,
+      );
 
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: data.response,
+        content: response,
         timestamp: Date.now(),
       };
 
@@ -208,7 +210,7 @@ const Chat = ({ context }: ChatProps) => {
             />
             <button
               type="submit"
-              disabled={!input.trim() || isLoading}
+              disabled={!input.trim() || isLoading || !geminiClient}
               className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-blue-600 hover:text-blue-700 disabled:text-gray-400 disabled:cursor-not-allowed"
             >
               <Send size={18} />
