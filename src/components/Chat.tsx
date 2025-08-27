@@ -18,9 +18,16 @@ const Chat = () => {
   const [geminiClient, setGeminiClient] = useState<GeminiChatClient | null>(
     null,
   );
+  const [requestCount, setRequestCount] = useState(0);
+  const [lastRequestTime, setLastRequestTime] = useState(0);
+  const [rateLimitExceeded, setRateLimitExceeded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Rate limiting configuration
+  const MAX_REQUESTS_PER_HOUR = 20;
+  const MIN_REQUEST_INTERVAL = 3000;
 
   // Initialize Gemini client
   useEffect(() => {
@@ -32,7 +39,7 @@ const Chat = () => {
     }
   }, []);
 
-  // Load chat history from localStorage on mount
+  // Load chat history and rate limiting data from localStorage on mount
   useEffect(() => {
     try {
       const savedHistory = localStorage.getItem('tech-tree-chat-history');
@@ -52,6 +59,19 @@ const Chat = () => {
             );
           }
         }, 100);
+      }
+
+      // Load rate limiting data
+      const savedRequestCount = localStorage.getItem('tech-tree-request-count');
+      const savedLastRequestTime = localStorage.getItem(
+        'tech-tree-last-request-time',
+      );
+
+      if (savedRequestCount) {
+        setRequestCount(parseInt(savedRequestCount, 10));
+      }
+      if (savedLastRequestTime) {
+        setLastRequestTime(parseInt(savedLastRequestTime, 10));
       }
     } catch (error) {
       console.error('Error loading chat history:', error);
@@ -73,6 +93,19 @@ const Chat = () => {
     }
   }, [messages]);
 
+  // Save rate limiting data to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('tech-tree-request-count', requestCount.toString());
+      localStorage.setItem(
+        'tech-tree-last-request-time',
+        lastRequestTime.toString(),
+      );
+    } catch (error) {
+      console.error('Error saving rate limiting data:', error);
+    }
+  }, [requestCount, lastRequestTime]);
+
   // Auto-scroll to bottom only when user sends a message
   useEffect(() => {
     // Only scroll if the last message is from the user or if it's the first message
@@ -84,9 +117,56 @@ const Chat = () => {
     }
   }, [messages]);
 
+  const checkRateLimit = (): boolean => {
+    const now = Date.now();
+    const oneHourAgo = now - 60 * 60 * 1000;
+
+    // Reset counter if more than 1 hour has passed
+    if (lastRequestTime < oneHourAgo) {
+      setRequestCount(0);
+      setLastRequestTime(now);
+      return true;
+    }
+
+    // Check hourly limit
+    if (requestCount >= MAX_REQUESTS_PER_HOUR) {
+      setRateLimitExceeded(true);
+      return false;
+    }
+
+    // Check minimum interval between requests
+    if (now - lastRequestTime < MIN_REQUEST_INTERVAL) {
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading || !geminiClient) return;
+
+    // Check rate limits
+    if (!checkRateLimit()) {
+      if (rateLimitExceeded) {
+        const errorMessage: ChatMessage = {
+          id: Date.now().toString(),
+          type: 'assistant',
+          content: `Rate limit exceeded. You can make up to ${MAX_REQUESTS_PER_HOUR} requests per hour. Please try again later.`,
+          timestamp: Date.now(),
+        };
+        setMessages((prev) => [...prev, errorMessage]);
+      } else {
+        const errorMessage: ChatMessage = {
+          id: Date.now().toString(),
+          type: 'assistant',
+          content: `Please wait at least ${MIN_REQUEST_INTERVAL / 1000} seconds between requests.`,
+          timestamp: Date.now(),
+        };
+        setMessages((prev) => [...prev, errorMessage]);
+      }
+      return;
+    }
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -98,6 +178,9 @@ const Chat = () => {
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
+    setRequestCount((prev) => prev + 1);
+    setLastRequestTime(Date.now());
+    setRateLimitExceeded(false);
 
     try {
       const response = await geminiClient.sendMessage(
@@ -131,8 +214,13 @@ const Chat = () => {
 
   const clearHistory = () => {
     setMessages([]);
+    setRequestCount(0);
+    setLastRequestTime(0);
+    setRateLimitExceeded(false);
     localStorage.removeItem('tech-tree-chat-history');
     localStorage.removeItem('tech-tree-chat-scroll');
+    localStorage.removeItem('tech-tree-request-count');
+    localStorage.removeItem('tech-tree-last-request-time');
   };
 
   const saveScrollPosition = () => {
@@ -164,17 +252,27 @@ const Chat = () => {
       {/* Header */}
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-lg font-semibold">Tech Tree Chat</CardTitle>
-        {messages.length > 0 && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearHistory}
-            className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50"
-            title="Clear Chat History"
-          >
-            <Trash2 size={18} />
-          </Button>
-        )}
+        <div className="flex items-center space-x-2">
+          {rateLimitExceeded && (
+            <Badge variant="destructive" className="text-xs">
+              Rate Limited
+            </Badge>
+          )}
+          <Badge variant="outline" className="text-xs">
+            {requestCount}/{MAX_REQUESTS_PER_HOUR} requests per hour
+          </Badge>
+          {messages.length > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearHistory}
+              className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50"
+              title="Clear Chat History"
+            >
+              <Trash2 size={18} />
+            </Button>
+          )}
+        </div>
       </CardHeader>
 
       {/* Messages */}
@@ -337,12 +435,14 @@ const Chat = () => {
               placeholder="Ask a question about the Tech Tree..."
               className="w-full resize-none pr-12 max-h-32"
               rows={1}
-              disabled={isLoading}
+              disabled={isLoading || rateLimitExceeded}
             />
             <Button
               type="submit"
               size="sm"
-              disabled={!input.trim() || isLoading || !geminiClient}
+              disabled={
+                !input.trim() || isLoading || !geminiClient || rateLimitExceeded
+              }
               className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 h-8 w-8"
             >
               <Send size={18} />
