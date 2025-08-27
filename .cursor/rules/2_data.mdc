@@ -1,0 +1,101 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Data Management Guidelines - Investment Tech Tree
+
+## Data Structure Overview
+
+The technology tree is defined in `src/DATA.ts` and consists of:
+
+- **Nodes**: Technology concepts, milestones, and enabling technologies
+- **Edges**: Relationships and dependencies between nodes
+- **Descriptions**: Detailed information for AI context
+
+## Node Types and Properties
+
+```typescript
+// Core node structure
+interface InvestTechTreeNode {
+  id: string;                    // Unique identifier
+  label: string;                 // Display name
+  type: NodeLabel;               // ReactorConcept | Milestone | EnablingTechnology
+  category?: string;             // Technology category (e.g., "Fusion")
+  subtype?: string;              // Specific subtype
+  trl_current?: string;          // Current Technology Readiness Level
+  trl_projected_5_10_years?: string; // Projected TRL in 5-10 years
+  detailedDescription?: string;  // AI context description
+}
+```
+
+## Adding New Nodes
+
+1. **Choose appropriate type**:
+   - `ReactorConcept`: Core fusion reactor designs
+   - `Milestone`: Critical achievements and demonstrations
+   - `EnablingTechnology`: Supporting technologies
+
+2. **Set TRL values**:
+   - Use string format: "1", "2", "3", "4", "5", "6", "7", "8", "9"
+   - Ranges: "4-5", "5-6"
+   - Project future TRL when applicable
+
+3. **Provide descriptions**:
+   - Include technical details
+   - Add investment context
+   - Reference related technologies
+
+## Edge Relationships
+
+```typescript
+interface InvestTechTreeEdge {
+  id: string;           // Unique edge identifier
+  source: string;       // Source node ID
+  target?: string;      // Single target node ID
+  targets?: string[];   // Multiple target node IDs
+}
+```
+
+## Data Validation Rules
+
+- All node IDs must be unique
+- Edge source and target nodes must exist
+- TRL values must be valid (1-9 or ranges)
+- Descriptions should be comprehensive for AI context
+
+## Technology Categories
+
+- **Fusion**: Core fusion reactor concepts
+- **Magnets**: Magnetic confinement technologies
+- **Materials**: Advanced materials for fusion
+- **Diagnostics**: Measurement and control systems
+- **Heating**: Plasma heating technologies
+
+## TRL Definitions
+
+- **TRL 1-3**: Basic research and concept development
+- **TRL 4-6**: Technology development and validation
+- **TRL 7-9**: System demonstration and deployment
+
+## Best Practices
+
+- Use descriptive, consistent naming conventions
+- Include comprehensive descriptions for AI context
+- Maintain logical relationship structure
+- Update TRL values based on latest research
+- Document sources for technical information
+
+## Data Updates
+
+- Test changes locally before committing
+- Verify graph layout still works correctly
+- Update related documentation
+- Consider impact on AI chat responses
+
+## AI Integration
+
+- Detailed descriptions improve AI response quality
+- Include investment and commercial context
+- Reference related technologies and milestones
+- Provide technical specifications when relevant

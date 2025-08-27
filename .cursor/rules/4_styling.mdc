@@ -1,0 +1,100 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Styling Guidelines - Investment Tech Tree
+
+## Tailwind CSS Usage
+
+- Use Tailwind utility classes for styling
+- Follow mobile-first responsive design
+- Use consistent spacing and color scales
+- Implement dark mode support where appropriate
+
+## Color System
+
+```css
+/* Primary colors for different node types */
+.blue-500    /* ReactorConcept nodes */
+.green-500   /* Milestone nodes */
+.red-500     /* EnablingTechnology nodes */
+
+/* Semantic colors */
+.text-gray-900  /* Primary text */
+.text-gray-600  /* Secondary text */
+.text-gray-400  /* Muted text */
+.bg-white       /* Primary background */
+.bg-gray-50     /* Secondary background */
+```
+
+## Component Styling
+
+- Use consistent border radius (rounded-md, rounded-lg)
+- Implement proper hover and focus states
+- Use consistent shadows (shadow-sm, shadow-md)
+- Maintain proper spacing hierarchy
+
+## Responsive Design
+
+```css
+/* Mobile-first approach */
+.container {
+  @apply px-4 py-2;           /* Mobile */
+  @apply md:px-6 md:py-4;     /* Tablet */
+  @apply lg:px-8 lg:py-6;     /* Desktop */
+}
+```
+
+## Graph Node Styling
+
+- Use consistent node sizes and shapes
+- Implement proper hover effects
+- Use color coding for different node types
+- Ensure proper contrast for accessibility
+
+## Interactive Elements
+
+- Use consistent button styles
+- Implement proper focus indicators
+- Use smooth transitions for state changes
+- Ensure touch-friendly sizing on mobile
+
+## Typography
+
+```css
+/* Text hierarchy */
+.text-2xl font-bold    /* Headings */
+.text-lg font-semibold /* Subheadings */
+.text-base            /* Body text */
+.text-sm              /* Captions */
+.text-xs              /* Labels */
+```
+
+## Layout Patterns
+
+- Use CSS Grid for complex layouts
+- Implement proper flexbox patterns
+- Use consistent container widths
+- Maintain proper aspect ratios
+
+## Animation and Transitions
+
+- Use smooth transitions for state changes
+- Implement loading animations
+- Use consistent timing functions
+- Avoid excessive animations
+
+## Accessibility
+
+- Ensure proper color contrast ratios
+- Use semantic HTML elements
+- Implement proper focus management
+- Test with screen readers
+
+## Custom Components
+
+- Extend Radix UI components with Tailwind
+- Use consistent component APIs
+- Implement proper prop forwarding
+- Maintain design system consistency

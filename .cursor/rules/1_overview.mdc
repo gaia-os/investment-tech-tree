@@ -1,0 +1,69 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+# Investment Tech Tree
+
+## Project Overview
+
+This is a Next.js-based interactive visualization platform for fusion energy technology development pathways. The application uses React Flow for graph visualization, Google Gemini for AI chat, and TypeScript for type safety.
+
+## Technology Stack
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS, Radix UI components
+- **Visualization**: React Flow, ELK.js for graph layout
+- **AI**: Google Gemini API for contextual chat
+- **Development**: ESLint, Prettier, lint-staged
+
+## Code Style & Quality
+
+- Use TypeScript for all new code
+- Follow ESLint and Prettier configurations
+- Write self-documenting code with clear variable names
+- Add JSDoc comments for complex functions
+- Use functional components with hooks
+- Prefer composition over inheritance
+
+## File Structure Conventions
+
+- Components in `src/components/`
+- Utility functions in `src/lib/`
+- Types in `src/lib/types.ts`
+- Data in `src/DATA.ts`
+- UI components in `src/components/ui/`
+
+## Data Model
+
+The application uses three main node types:
+
+1. **ReactorConcept**: Core fusion reactor designs
+2. **Milestone**: Critical achievements and demonstrations  
+3. **EnablingTechnology**: Supporting technologies
+
+Each node includes TRL tracking, descriptions, and category classification.
+
+## Development Guidelines
+
+- Test changes locally before committing
+- Update documentation when modifying data structures
+- Follow React best practices for state management
+- Use proper error handling for API calls
+- Implement proper loading states for async operations
+
+## AI Integration
+
+- Rate limiting is implemented for Gemini API calls
+- Chat history is persisted in localStorage
+- XSS protection via DOMPurify for AI responses
+- Context includes full tech tree data for informed responses
+
+## Common Patterns
+
+- Use React Flow for graph interactions
+- Implement proper TypeScript interfaces
+- Follow Next.js App Router conventions
+- Use Tailwind utility classes for styling
+- Implement responsive design patterns

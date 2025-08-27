@@ -1,0 +1,106 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# TypeScript Guidelines - Investment Tech Tree
+
+## Type Definitions
+
+- Define interfaces for all data structures
+- Use strict TypeScript configuration
+- Prefer interfaces over types for object shapes
+- Use union types for discriminated unions
+
+## Node and Edge Types
+
+```typescript
+// Technology tree node structure
+interface InvestTechTreeNode {
+  id: string;
+  label: string;
+  type: NodeLabel;
+  category?: string;
+  subtype?: string;
+  trl_current?: string;
+  trl_projected_5_10_years?: string;
+  detailedDescription?: string;
+}
+
+// Graph edge structure
+interface InvestTechTreeEdge {
+  id: string;
+  source: string;
+  target?: string;
+  targets?: string[];
+}
+```
+
+## Component Props
+
+- Always define prop interfaces
+- Use optional properties with `?`
+- Provide default values where appropriate
+- Use generic types for reusable components
+
+## State Types
+
+- Define explicit types for useState
+- Use proper typing for complex state objects
+- Avoid `any` type - use `unknown` if needed
+- Use type guards for runtime type checking
+
+## API Integration
+
+- Define interfaces for API responses
+- Use proper error types
+- Implement request/response type safety
+- Handle loading and error states with proper types
+
+## Event Handling
+
+```typescript
+// Proper event typing
+const handleNodeClick = (event: React.MouseEvent, node: UiNode) => {
+  // Event handler logic
+};
+
+const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // Input change logic
+};
+```
+
+## Utility Types
+
+- Use built-in utility types (Partial, Pick, Omit)
+- Create custom utility types when needed
+- Use conditional types for complex logic
+- Implement proper generic constraints
+
+## Type Guards
+
+```typescript
+// Type guard functions
+function isReactorConcept(node: InvestTechTreeNode): node is ReactorConceptNode {
+  return node.type === 'ReactorConcept';
+}
+
+function isValidTRL(trl: string): trl is TRLValue {
+  return ['1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(trl);
+}
+```
+
+## Error Handling
+
+- Define custom error types
+- Use Result types for operations that can fail
+- Implement proper error boundaries with typed props
+- Use discriminated unions for error states
+
+## Best Practices
+
+- Enable strict mode in tsconfig
+- Use noImplicitAny and strictNullChecks
+- Prefer readonly properties where appropriate
+- Use const assertions for literal types
+- Implement proper generic bounds

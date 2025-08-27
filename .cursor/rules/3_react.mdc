@@ -1,0 +1,96 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# React Development Guidelines - Investment Tech Tree
+
+## Component Structure
+
+- Use functional components with hooks
+- Export components as named exports
+- Use TypeScript interfaces for props
+- Implement proper prop validation
+
+## State Management
+
+- Use React hooks (useState, useEffect, useCallback, useMemo)
+- Keep state as local as possible
+- Use context sparingly for shared state
+- Implement proper cleanup in useEffect
+
+## Performance Optimization
+
+- Use React.memo for expensive components
+- Implement useCallback for event handlers passed to children
+- Use useMemo for expensive calculations
+- Avoid unnecessary re-renders
+
+## Event Handling
+
+- Use proper TypeScript event types
+- Implement proper error boundaries
+- Handle async operations with loading states
+- Use proper cleanup for subscriptions
+
+## Component Patterns
+
+```typescript
+// Preferred component structure
+interface ComponentProps {
+  // Define props interface
+}
+
+export const Component: React.FC<ComponentProps> = ({ prop1, prop2 }) => {
+  // State declarations
+  const [state, setState] = useState<StateType>(initialState);
+  
+  // Effects
+  useEffect(() => {
+    // Effect logic
+    return () => {
+      // Cleanup
+    };
+  }, [dependencies]);
+  
+  // Event handlers
+  const handleEvent = useCallback((event: EventType) => {
+    // Handler logic
+  }, [dependencies]);
+  
+  // Render
+  return (
+    <div>
+      {/* JSX */}
+    </div>
+  );
+};
+```
+
+## React Flow Integration
+
+- Use React Flow components for graph visualization
+- Implement proper node and edge types
+- Handle graph interactions with callbacks
+- Use ELK.js for automatic layout
+
+## Error Handling
+
+- Implement error boundaries for component trees
+- Use try-catch for async operations
+- Provide meaningful error messages
+- Handle loading and error states gracefully
+
+## Accessibility
+
+- Use semantic HTML elements
+- Implement proper ARIA labels
+- Ensure keyboard navigation
+- Test with screen readers
+
+## Testing Considerations
+
+- Write testable components
+- Use proper mocking for external dependencies
+- Test user interactions
+- Implement integration tests for complex flows
