@@ -1,5 +1,5 @@
 import { DATA } from '@/DATA';
-import { LABEL_COLORS_VARIABLES, UiNode } from '@/lib/types';
+import { LABEL_COLORS_VARIABLES, NodeLabel, UiNode } from '@/lib/types';
 import { Edge, MarkerType } from '@xyflow/react';
 import ELK from 'elkjs/lib/elk.bundled.js';
 
@@ -45,7 +45,7 @@ export const getLayoutedElements: () => Promise<{
         y: (layoutedNode?.y || 0) - nodeHeight / 2,
       },
       style: {
-        borderColor: `${LABEL_COLORS_VARIABLES[node.data.nodeLabel]}`,
+        borderColor: `${LABEL_COLORS_VARIABLES[node.data.nodeLabel as NodeLabel]}`,
         borderStyle: 'solid',
         borderRadius: '6px',
         display: 'flex',
