@@ -6,6 +6,10 @@ export interface NodeProperties {
   description: string;
   detailedDescription?: string; // Detailed description for AI context
   references?: string[];
+  // Group-related properties
+  isGroup?: boolean;
+  isExpanded?: boolean;
+  childNodeIds?: string[];
 }
 
 export type UiNode = Node<Record<string, unknown> & NodeProperties>;
@@ -77,4 +81,20 @@ export interface ChatMessage {
 export interface ChatHistory {
   messages: ChatMessage[];
   lastUpdated: number;
+}
+
+// Grouping-related types
+export type GroupingMode = NodeLabel | 'None';
+
+export interface GroupNode {
+  id: string;
+  type: 'group';
+  groupType: NodeLabel;
+  isExpanded: boolean;
+  childNodeIds: string[];
+}
+
+export interface GroupState {
+  mode: GroupingMode;
+  expandedGroups: Set<string>;
 }

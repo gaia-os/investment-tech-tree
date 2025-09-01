@@ -1,7 +1,7 @@
 'use client';
 
 import { getLayoutedElements } from '@/lib/elkjs';
-import { HighlightedElements, UiNode } from '@/lib/types';
+import { HighlightedElements, UiNode, GroupingMode } from '@/lib/types';
 import {
   Background,
   BackgroundVariant,
@@ -14,6 +14,7 @@ import {
 import React, { useCallback, useEffect, useState } from 'react';
 import { Legend } from './Legend';
 import { LoadingSpinner } from './LoadingSpinner';
+import { GroupSelector } from './GroupSelector';
 import TabPanel from './TabPanel';
 
 const TechTree: React.FC = () => {
@@ -28,6 +29,11 @@ const TechTree: React.FC = () => {
       nodeIds: new Set(),
       edgeIds: new Set(),
     });
+  // Grouping state
+  const [groupingMode, setGroupingMode] = useState<GroupingMode>('Milestone');
+  const [showingRelatedNodes, setShowingRelatedNodes] = useState<string | null>(
+    null,
+  );
   const { fitView } = useReactFlow();
 
   // Function to find connected nodes and edges
@@ -60,7 +66,12 @@ const TechTree: React.FC = () => {
 
   useEffect(() => {
     const loadLayout = async () => {
-      const { layoutedNodes, layoutedEdges } = await getLayoutedElements();
+      setIsLoading(true);
+      const { layoutedNodes, layoutedEdges } = await getLayoutedElements(
+        groupingMode,
+        new Set(), // No longer need expandedGroups since we always show all nodes
+        showingRelatedNodes,
+      );
       setNodes(() => layoutedNodes);
       setEdges(() => layoutedEdges);
       setIsLoading(false);
@@ -68,7 +79,7 @@ const TechTree: React.FC = () => {
     };
 
     loadLayout();
-  }, [fitView]);
+  }, [fitView, groupingMode, showingRelatedNodes]);
 
   // Update node and edge styles based on highlighted elements
   useEffect(() => {
@@ -112,21 +123,34 @@ const TechTree: React.FC = () => {
 
   const onNodeClick = useCallback(
     (_: React.MouseEvent, newSelectedNode: UiNode) => {
-      if (!selectedNode || selectedNode.id != newSelectedNode.id) {
-        setSelectedNode(() => ({ ...newSelectedNode }));
-        // Find and set highlighted elements
-        const connected = findConnectedElements(newSelectedNode.id, edges);
-        setHighlightedElements(connected);
-      }
+      // Handle regular node clicks - show this node with all its related nodes and edges
+      setSelectedNode(() => ({ ...newSelectedNode }));
+      setShowingRelatedNodes(newSelectedNode.id);
+
+      // Find and set highlighted elements
+      const connected = findConnectedElements(newSelectedNode.id, edges);
+      setHighlightedElements(connected);
     },
-    [selectedNode, setSelectedNode, findConnectedElements, edges],
+    [findConnectedElements, edges],
   );
+
+  // Handle grouping mode changes
+  const handleGroupingModeChange = useCallback((mode: GroupingMode) => {
+    setGroupingMode(mode);
+    setSelectedNode(undefined); // Clear selection
+    setShowingRelatedNodes(null); // Clear related nodes
+    setHighlightedElements({ nodeIds: new Set(), edgeIds: new Set() }); // Clear highlights
+  }, []);
 
   if (isLoading) return <LoadingSpinner />;
 
   return (
     <div className="w-full h-screen bg-gray-100 flex">
       <div className="w-2/4 relative">
+        <GroupSelector
+          currentMode={groupingMode}
+          onModeChange={handleGroupingModeChange}
+        />
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -140,7 +164,7 @@ const TechTree: React.FC = () => {
           nodesConnectable={false}
           colorMode={'light'}
           fitView
-          fitViewOptions={{ padding: 0.1 }}
+          fitViewOptions={{ padding: 0.5 }}
           minZoom={0.3}
         >
           <Background bgColor="white" variant={BackgroundVariant.Dots} />
