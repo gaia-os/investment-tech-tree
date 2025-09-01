@@ -73,7 +73,7 @@ IMPORTANT INSTRUCTIONS:
   * Tables: "min-w-full divide-y divide-gray-200 mb-4" with "px-3 py-2 text-sm" for cells
   * Strong text: "font-semibold text-gray-900"
 
- - Each node may include a list of references. Use these references to ground your explanations and, when relevant, include a short "Sources" section at the end with a numbered list linking to them. Use anchor tags for URLs. Do not fabricate citations. If you reference a specific claim, add an inline [n] that corresponds to the numbered source.
+ - Each node may include a list of references. Use these references to ground your explanations and, when relevant, include a short "Sources" section at the end with a numbered list linking to them. Use anchor tags for URLs. Do not fabricate citations. If you reference a specific claim, add an inline [n] that corresponds to the numbered source. Ensure the Sources section uses proper HTML structure with h3 and ol/li elements.
 
 Answer the user's question based on this information. Be precise, informative, and explain technical concepts in an understandable way. If relevant connections between different technologies exist, mention them.`;
 
