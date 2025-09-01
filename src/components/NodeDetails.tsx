@@ -90,6 +90,45 @@ const NodeDetails = ({ selectedNode }: NodeDetailsProps) => {
                       </p>
                     </AccordionContent>
                   </AccordionItem>
+                  {Array.isArray(selectedNode.data.references) && (
+                    <AccordionItem value="references">
+                      <AccordionTrigger className="text-sm font-semibold text-gray-700">
+                        References
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
+                          {selectedNode.data.references.map(
+                            (ref: string, idx: number) => {
+                              const text = ref;
+                              const isLink = /^(https?:\/\/|doi:|arxiv:)/i.test(
+                                text,
+                              );
+                              return (
+                                <li key={idx} className="break-words">
+                                  {isLink ? (
+                                    <a
+                                      href={
+                                        text.startsWith('http')
+                                          ? text
+                                          : undefined
+                                      }
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-blue-600 hover:underline"
+                                    >
+                                      {text}
+                                    </a>
+                                  ) : (
+                                    <span>{text}</span>
+                                  )}
+                                </li>
+                              );
+                            },
+                          )}
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
                 </Accordion>
               </div>
             )}

@@ -5,6 +5,7 @@ export interface NodeProperties {
   nodeLabel: NodeLabel;
   description: string;
   detailedDescription?: string; // Detailed description for AI context
+  references?: string[];
 }
 
 export type UiNode = Node<Record<string, unknown> & NodeProperties>;
@@ -49,6 +50,7 @@ export interface InvestTechTreeNode {
   subtype?: string;
   trl_current?: string;
   trl_projected_5_10_years?: string;
+  references: string[];
   detailedDescription?: string;
 }
 

@@ -17,16 +17,27 @@ export class GeminiChatClient {
       throw new Error('Message is required');
     }
 
-    const model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-pro-latest' });
+    const model = this.genAI.getGenerativeModel({
+      model: 'gemini-1.5-pro-latest',
+    });
 
     // Build context string from nodes and edges
     const nodesContext = context.nodes
       .map((node) => {
+        const references = Array.isArray(node.data.references)
+          ? node.data.references
+          : [];
+        const referencesBlock =
+          references.length > 0
+            ? `\n      - References:\n${references
+                .map((ref, i) => `        ${i + 1}. ${ref}`)
+                .join('\n')}`
+            : '';
         return `Node: ${node.data.label} (${node.data.nodeLabel})
       - ID: ${node.id}
       - Category: ${node.data.category || 'N/A'}
       - TRL Current: ${node.data.trl_current || 'N/A'}
-      - Description: ${node.data.detailedDescription || node.data.description || 'No description available'}`;
+      - Description: ${node.data.detailedDescription || node.data.description || 'No description available'}${referencesBlock}`;
       })
       .join('\n\n');
 
@@ -61,6 +72,8 @@ IMPORTANT INSTRUCTIONS:
   * Lists: "list-disc list-inside mb-3 text-gray-700" for ul, "list-decimal list-inside mb-3 text-gray-700" for ol
   * Tables: "min-w-full divide-y divide-gray-200 mb-4" with "px-3 py-2 text-sm" for cells
   * Strong text: "font-semibold text-gray-900"
+
+ - Each node may include a list of references. Use these references to ground your explanations and, when relevant, include a short "Sources" section at the end with a numbered list linking to them. Use anchor tags for URLs. Do not fabricate citations. If you reference a specific claim, add an inline [n] that corresponds to the numbered source.
 
 Answer the user's question based on this information. Be precise, informative, and explain technical concepts in an understandable way. If relevant connections between different technologies exist, mention them.`;
 

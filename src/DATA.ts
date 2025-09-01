@@ -9,6 +9,11 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'ReactorConcept',
       category: 'Fusion',
       trl_current: '5-6',
+      references: [
+        'https://www.iter.org/mach/Magnets',
+        'https://www.jt60sa.org/wp/magnets/',
+        'https://www.iter.org/few-lines',
+      ],
     },
     {
       id: 'milestone_lts_physics_validation',
@@ -16,6 +21,11 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'Milestone',
       subtype: 'PhysicsDemonstration',
       trl_current: '5',
+      references: [
+        'https://www.jt60sa.org/wp/',
+        'https://www.qst.go.jp/site/news/20241004.html',
+        'https://euro-fusion.org/devices/jt-60sa/',
+      ],
     },
     {
       id: 'milestone_iter_construction',
@@ -23,6 +33,11 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'Milestone',
       subtype: 'PrototypeConstruction',
       trl_current: '5-6',
+      references: [
+        'https://www.iter.org/node/20687/what-burning-plasma',
+        'https://www.energy.gov/science/doe-explainsburning-plasma',
+        'https://www.iter.org/few-lines',
+      ],
     },
     {
       id: 'concept_hts_tokamak',
@@ -30,6 +45,11 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'ReactorConcept',
       category: 'Fusion',
       trl_current: '4-5',
+      references: [
+        'https://cfs.energy/technology/',
+        'https://cfs.energy/technology/sparc/',
+        'https://news.mit.edu/2021/MIT-CFS-major-advance-toward-fusion-energy-0908',
+      ],
     },
     {
       id: 'milestone_hts_magnet_demo',
@@ -37,6 +57,11 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'Milestone',
       subtype: 'ComponentTest',
       trl_current: '4-5',
+      references: [
+        'https://news.mit.edu/2021/MIT-CFS-major-advance-toward-fusion-energy-0908',
+        'https://htsmagnet.cfs.energy/',
+        'https://www-new.psfc.mit.edu/news/multimedia/2021/highlights-of-the-mit-cfs-20t-magnet-demo-event',
+      ],
     },
     {
       id: 'milestone_sparc_net_energy',
@@ -45,6 +70,11 @@ const tech_tree: InvestTechTreeGraph = {
       subtype: 'PrototypeConstruction',
       trl_current: '4',
       trl_projected_5_10_years: '6',
+      references: [
+        'https://cfs.energy/technology/sparc/',
+        'https://www.cambridge.org/core/journals/journal-of-plasma-physics/collections/status-of-the-sparc-physics-basis',
+        'https://www-new.psfc.mit.edu/sparc',
+      ],
     },
     {
       id: 'concept_stellarator',
@@ -52,6 +82,11 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'ReactorConcept',
       category: 'Fusion',
       trl_current: '4-5',
+      references: [
+        'https://www.ipp.mpg.de/w7x',
+        'https://www.energy.gov/science/articles/fusion-twist-improving-stellarators',
+        'https://en.wikipedia.org/wiki/Stellarator',
+      ],
     },
     {
       id: 'milestone_w7x_optimization_proof',
@@ -59,6 +94,11 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'Milestone',
       subtype: 'PhysicsDemonstration',
       trl_current: '4-5',
+      references: [
+        'https://www.ipp.mpg.de/5125328/05_21',
+        'https://www.ipp.mpg.de/5532945/w7x',
+        'https://fusion.bsc.es/index.php/2018/07/13/wendelstein-7-x-achieves-a-stellarator-world-record/',
+      ],
     },
     {
       id: 'milestone_hts_stellarator_coil_fab',
@@ -67,6 +107,11 @@ const tech_tree: InvestTechTreeGraph = {
       subtype: 'ComponentTest',
       trl_current: '2-3',
       trl_projected_5_10_years: '4',
+      references: [
+        'https://www.ipp.mpg.de/5548072/hts4fusion',
+        'https://www.energy.gov/science/articles/fusion-twist-improving-stellarators',
+        'https://www.pppl.gov/advanced-projects',
+      ],
     },
     {
       id: 'concept_frc',
@@ -74,6 +119,11 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'ReactorConcept',
       category: 'Fusion',
       trl_current: '4',
+      references: [
+        'https://www.tae.com/technology/',
+        'https://aip.scitation.org/doi/10.1063/1.3601760',
+        'https://en.wikipedia.org/wiki/Field-reversed_configuration',
+      ],
     },
     {
       id: 'milestone_frc_stable_sustainment',
@@ -81,6 +131,10 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'Milestone',
       subtype: 'PhysicsDemonstration',
       trl_current: '4',
+      references: [
+        'https://www.tae.com/technology/',
+        'https://www.nature.com/articles/s41586-021-03675-1',
+      ],
     },
     {
       id: 'milestone_frc_net_energy',
@@ -89,6 +143,10 @@ const tech_tree: InvestTechTreeGraph = {
       subtype: 'PrototypeConstruction',
       trl_current: '3',
       trl_projected_5_10_years: '5',
+      references: [
+        'https://www.tae.com/projects/copernicus/',
+        'https://www.tae.com/technology/',
+      ],
     },
     {
       id: 'concept_icf',
@@ -96,6 +154,10 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'ReactorConcept',
       category: 'Fusion',
       trl_current: '2-3',
+      references: [
+        'https://www.iaea.org/bulletin/burning-plasma',
+        'https://lasers.llnl.gov/science/how-nif-works',
+      ],
     },
     {
       id: 'milestone_nif_ignition',
@@ -103,6 +165,11 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'Milestone',
       subtype: 'PhysicsDemonstration',
       trl_current: '5-6',
+      references: [
+        'https://lasers.llnl.gov/news/age-ignition',
+        'https://www.energy.gov/articles/doe-national-laboratory-makes-history-achieving-fusion-ignition',
+        'https://www.llnl.gov/news/ignition',
+      ],
     },
     {
       id: 'milestone_ife_driver_dev',
@@ -111,6 +178,11 @@ const tech_tree: InvestTechTreeGraph = {
       subtype: 'ComponentDevelopment',
       trl_current: '2-3',
       trl_projected_5_10_years: '4-5',
+      references: [
+        'https://nap.nationalacademies.org/catalog/26791/bringing-fusion-to-the-us-grid',
+        'https://www.eli-beams.eu/en/facility/eli-beamlines/laser-systems/hapls/',
+        'https://lasers.llnl.gov/news/llnls-breakthrough-ignition-experiment-highlighted-in-physical-review-letters',
+      ],
     },
     {
       id: 'concept_z_pinch',
@@ -118,6 +190,10 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'ReactorConcept',
       category: 'Fusion',
       trl_current: '4',
+      references: [
+        'https://www.sandia.gov/research/research-foundations/pulsed-power-science-technology/z-machine/',
+        'https://en.wikipedia.org/wiki/Z-pinch',
+      ],
     },
     {
       id: 'milestone_sfs_z_pinch_stability',
@@ -125,6 +201,10 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'Milestone',
       subtype: 'PhysicsDemonstration',
       trl_current: '4',
+      references: [
+        'https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.87.205003',
+        'https://www.zapenergy.com/technology',
+      ],
     },
     {
       id: 'concept_lwr_smr',
@@ -132,6 +212,10 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'ReactorConcept',
       category: 'Fission',
       trl_current: '7-8',
+      references: [
+        'https://www.iaea.org/topics/small-modular-reactors',
+        'https://world-nuclear.org/information-library/nuclear-fuel-cycle/nuclear-power-reactors/small-nuclear-power-reactors',
+      ],
     },
     {
       id: 'milestone_lwr_smr_design_approval',
@@ -139,6 +223,10 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'Milestone',
       subtype: 'Regulatory',
       trl_current: '7-8',
+      references: [
+        'https://www.nrc.gov/reactors/new-reactors/advanced/who-were-working-with/applicant-projects/nuscale-us460.html',
+        'https://www.govinfo.gov/app/details/FR-2025-06-04/2025-10123',
+      ],
     },
     {
       id: 'milestone_lwr_smr_first_build',
@@ -147,6 +235,10 @@ const tech_tree: InvestTechTreeGraph = {
       subtype: 'CommercialDeployment',
       trl_current: '7',
       trl_projected_5_10_years: '9',
+      references: [
+        'https://www.cnnc.com.cn/english/zxzx_1/gtgc/202407/2d5e7dbe1c8d4c7dbb7a1a3e7d1a7e9f.shtml',
+        'https://world-nuclear.org/information-library/country-profiles/countries-a-f/china-nuclear-power#ACP100',
+      ],
     },
     {
       id: 'concept_htgr',
@@ -154,6 +246,10 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'ReactorConcept',
       category: 'Fission',
       trl_current: '6-7',
+      references: [
+        'https://www.iaea.org/topics/high-temperature-gas-cooled-reactors-htgrs',
+        'https://world-nuclear.org/information-library/nuclear-fuel-cycle/nuclear-power-reactors/advanced-nuclear-power-reactors#High-temperature-gas-cooled-reactors',
+      ],
     },
     {
       id: 'milestone_htgr_demo_reactors',
@@ -161,6 +257,10 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'Milestone',
       subtype: 'PrototypeDemonstration',
       trl_current: '6-7',
+      references: [
+        'https://www.cnnc.com.cn/cnnc/xwzx65/ttyw_5916/202312/4a5a4a8fefc447d7b2d7d7ea3b5b3b7f.shtml',
+        'https://world-nuclear-news.org/Articles/China-connects-HTR-PM-to-the-grid',
+      ],
     },
     {
       id: 'concept_msr',
@@ -168,6 +268,10 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'ReactorConcept',
       category: 'Fission',
       trl_current: '3-4',
+      references: [
+        'https://www.iaea.org/topics/molten-salt-reactors',
+        'https://world-nuclear.org/information-library/nuclear-fuel-cycle/nuclear-power-reactors/advanced-nuclear-power-reactors#Molten-salt-reactors',
+      ],
     },
     {
       id: 'milestone_msre_operation',
@@ -175,6 +279,10 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'Milestone',
       subtype: 'PhysicsDemonstration',
       trl_current: '4',
+      references: [
+        'https://www.ornl.gov/content/molten-salt-reactor-experiment-msre',
+        'https://www.osti.gov/opennet/msre',
+      ],
     },
     {
       id: 'milestone_msr_materials_qualification',
@@ -183,6 +291,10 @@ const tech_tree: InvestTechTreeGraph = {
       subtype: 'ComponentDevelopment',
       trl_current: '3-4',
       trl_projected_5_10_years: '5-6',
+      references: [
+        'https://www.ornl.gov/group/chemical-sciences',
+        'https://www.iaea.org/publications/14561/status-of-molten-salt-reactor-technology',
+      ],
     },
     {
       id: 'concept_sfr',
@@ -190,6 +302,10 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'ReactorConcept',
       category: 'Fission',
       trl_current: '5-6',
+      references: [
+        'https://www.gen-4.org/gif/jcms/c_42153/sodium-cooled-fast-reactor-sfr',
+        'https://world-nuclear.org/information-library/nuclear-fuel-cycle/nuclear-power-reactors/fast-neutron-reactors',
+      ],
     },
     {
       id: 'milestone_sfr_prototype_operation',
@@ -197,6 +313,10 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'Milestone',
       subtype: 'PrototypeDemonstration',
       trl_current: '5-6',
+      references: [
+        'https://www.cnnc.com.cn/english/zxzx_1/gtgc/202312/69c0e3e9f01c4dfaa6c8ea5e1e9c8d67.shtml',
+        'https://world-nuclear.org/information-library/country-profiles/countries-a-f/china-nuclear-power#FastReactors',
+      ],
     },
     {
       id: 'concept_lfr',
@@ -204,6 +324,10 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'ReactorConcept',
       category: 'Fission',
       trl_current: '3-4',
+      references: [
+        'https://www.gen-4.org/gif/jcms/c_42154/lead-cooled-fast-reactor-lfr',
+        'https://world-nuclear.org/information-library/nuclear-fuel-cycle/nuclear-power-reactors/fast-neutron-reactors#Lead-cooled-fast-reactors',
+      ],
     },
     {
       id: 'milestone_lfr_materials_qualification',
@@ -212,6 +336,10 @@ const tech_tree: InvestTechTreeGraph = {
       subtype: 'ComponentDevelopment',
       trl_current: '3-4',
       trl_projected_5_10_years: '5',
+      references: [
+        'https://myrrha.be/technology',
+        'https://www.oecd-nea.org/jcms/pl_20662/materials-and-chemistry-studies-for-lead-alloy-coolants',
+      ],
     },
     {
       id: 'concept_twr',
@@ -219,6 +347,10 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'ReactorConcept',
       category: 'Fission',
       trl_current: '2-3',
+      references: [
+        'https://www.terrapower.com/our-work/traveling-wave-reactor/',
+        'https://en.wikipedia.org/wiki/Traveling_wave_reactor',
+      ],
     },
     {
       id: 'milestone_twr_fuel_qualification',
@@ -226,48 +358,84 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'Milestone',
       subtype: 'ComponentDevelopment',
       trl_current: '2-3',
+      references: [
+        'https://www.anl.gov/nse/metal-fuels-technology',
+        'https://inl.gov/research-programs/advanced-nuclear-fuels/',
+      ],
     },
     {
       id: 'tech_hts_magnets',
       label: 'HTS Magnets',
       type: 'EnablingTechnology',
       trl_current: '4-5 (Tokamaks); 2-3 (Stellarators)',
+      references: [
+        'https://news.mit.edu/2021/MIT-CFS-major-advance-toward-fusion-energy-0908',
+        'https://cfs.energy/news-and-media/cfs-commercial-fusion-power-with-hts-magnet/',
+        'https://www-new.psfc.mit.edu/research/topics/high-temperature-superconductors',
+      ],
     },
     {
       id: 'tech_triso_fuel',
       label: 'TRISO Fuel Cycle',
       type: 'EnablingTechnology',
       trl_current: '7-8 (Fabrication); 2-3 (Processing)',
+      references: [
+        'https://inl.gov/research-programs/advanced-nuclear-fuels/',
+        'https://art.inl.gov/News%20Highlight%20Attachments/TRISO-particles-most-robust.pdf',
+        'https://www.nrc.gov/docs/ML2114/ML21140A413.pdf',
+      ],
     },
     {
       id: 'tech_metallic_fuel',
       label: 'Metallic Fuel Cycle',
       type: 'EnablingTechnology',
       trl_current: '6-7',
+      references: [
+        'https://www.anl.gov/nse/metal-fuels-technology',
+        'https://inl.gov/research-programs/advanced-nuclear-fuels/',
+      ],
     },
     {
       id: 'tech_tritium_breeding',
       label: 'Tritium Breeding Blankets',
       type: 'EnablingTechnology',
       trl_current: '3-4',
+      references: [
+        'https://www.iter.org/mach/TBM',
+        'https://euro-fusion.org/programme/breeding-blankets/',
+      ],
     },
     {
       id: 'tech_pfm',
       label: 'Plasma-Facing Materials',
       type: 'EnablingTechnology',
       trl_current: '3-4',
+      references: [
+        'https://euro-fusion.org/programme/materials/',
+        'https://www.iaea.org/topics/fusion/plasma-facing-materials',
+      ],
     },
     {
       id: 'tech_haleu',
       label: 'HALEU Fuel Supply',
       type: 'EnablingTechnology',
       trl_current: '3-4 (Production)',
+      references: [
+        'https://www.energy.gov/ne/haleu-availability-program',
+        'https://www.energy.gov/ne/articles/centrus-reaches-900-kilogram-mark-haleu-production',
+        'https://investors.centrusenergy.com/news-releases/news-release-details/centrus-begin-haleu-production-october',
+      ],
     },
     {
       id: 'tech_power_cycle_sco2',
       label: 'sCO2 Power Cycle',
       type: 'EnablingTechnology',
       trl_current: '5-6',
+      references: [
+        'https://www.swri.org/markets/energy-environment/power-generation-utilities/advanced-power-systems/supercritical-transformational-electric-power-pilot-plant',
+        'https://www.netl.doe.gov/research/coal/energy-systems/turbines/supercritical-co2',
+        'https://www.gti.energy/step-demo/step-demo-news-and-events/',
+      ],
     },
     {
       id: 'milestone_step_demo_operation',
@@ -275,36 +443,63 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'Milestone',
       subtype: 'PrototypeDemonstration',
       trl_current: '6',
+      references: [
+        'https://www.swri.org/newsroom/press-releases/step-demo-supercritical-co2-pilot-plant-generates-electricity-the-first-time',
+        'https://www.swri.org/newsroom/press-releases/step-demo-pilot-plant-achieves-full-operational-conditions-phase-1-of-testing',
+        'https://www.swri.org/newsroom/press-releases/swri-gti-energy-ge-celebrate-mechanical-completion-of-155-million-supercritical-co2-pilot-plant',
+      ],
     },
     {
       id: 'tech_ai_ml_control',
       label: 'AI/ML for Control & Design',
       type: 'EnablingTechnology',
       trl_current: '3-5',
+      references: [
+        'https://www.nature.com/articles/s41586-021-04301-9',
+        'https://deepmind.google/discover/blog/accelerating-fusion-science-through-learned-plasma-control/',
+      ],
     },
     {
       id: 'tech_passive_safety',
       label: 'Passive Safety Systems',
       type: 'EnablingTechnology',
       trl_current: '7-9 (LWRs); 4-6 (Novel Coolants)',
+      references: [
+        'https://www.nrc.gov/reactors/new-reactors/advanced/ap1000.html',
+        'https://www.iaea.org/publications/10880/passive-safety-systems-and-natural-circulation-in-nuclear-power-plants',
+      ],
     },
     {
       id: 'tech_rad_hard_electronics',
       label: 'Radiation-Hardened Electronics',
       type: 'EnablingTechnology',
       trl_current: '3-7 (Application Dependent)',
+      references: [
+        'https://nepp.nasa.gov/',
+        'https://escies.org/space-components',
+        'https://www.sandia.gov/advanced_microelectronics/',
+      ],
     },
     {
       id: 'tech_plasma_heating',
       label: 'Plasma Heating Systems',
       type: 'EnablingTechnology',
       trl_current: '5-6',
+      references: [
+        'https://www.iter.org/mach/hcd',
+        'https://www.iter.org/mach/nb',
+      ],
     },
     {
       id: 'tech_divertor_concepts',
       label: 'Advanced Divertor Concepts',
       type: 'EnablingTechnology',
       trl_current: '2-3',
+      references: [
+        'https://www.gov.uk/government/news/mast-upgrade-helping-answer-the-big-questions-in-fusion-physics',
+        'https://www.iter.org/node/20687/masts-divertor-concept-yields-positive-results',
+        'https://pubs.aip.org/aip/pop/article/20/10/102507/318117/magnetic-geometry-and-physics-of-advanced',
+      ],
     },
     {
       id: 'milestone_advanced_divertor_test',
@@ -312,6 +507,11 @@ const tech_tree: InvestTechTreeGraph = {
       type: 'Milestone',
       subtype: 'ComponentTest',
       trl_current: '3',
+      references: [
+        'https://www.iter.org/fr/node/20687/public/private-consortium-building-dtt-tokamak',
+        'https://iris.enea.it/retrieve/dd11e37c-d64a-5d97-e053-d805fe0a6f04/DTT-IDR-Summary.pdf',
+        'https://www.igi.cnr.it/en/research/magnetic-confinement-research-in-padova/dtt/',
+      ],
     },
   ],
   edges: [
