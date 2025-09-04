@@ -131,7 +131,8 @@ const TechTree: React.FC = () => {
       if (node) {
         setSelectedNode(() => ({ ...node }));
         // Don't change the current view state - maintain connected nodes if they're currently shown
-        setHighlightedElements({ nodeIds: new Set(), edgeIds: new Set() }); // Clear highlights
+        const connected = findConnectedElements(nodeId, edges);
+        setHighlightedElements(connected);
       }
     },
     [nodes],
@@ -145,10 +146,8 @@ const TechTree: React.FC = () => {
         setSelectedNode(() => ({ ...node }));
         setShowingRelatedNodes(nodeId);
         setShowOnlyConnected(true); // Show only connected nodes
-
         // Find and set highlighted elements
-        const connected = findConnectedElements(nodeId, edges);
-        setHighlightedElements(connected);
+        setHighlightedElements({ nodeIds: new Set(), edgeIds: new Set() }); // Clear highlights
       }
     },
     [nodes, edges, findConnectedElements],

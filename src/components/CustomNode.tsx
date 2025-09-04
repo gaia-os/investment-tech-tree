@@ -24,25 +24,22 @@ export const CustomNode: React.FC<CustomNodeProps> = ({
         position={Position.Left}
         className="w-3 h-3 bg-gray-400"
       />
-      <div className="w-full h-full flex flex-col">
-        {/* Top row for icons */}
-        <div className="flex justify-end p-1 h-10">
-          <NodeActions
-            nodeId={id}
-            onShowDetails={onShowDetails}
-            onShowConnected={onShowConnected}
-          />
-        </div>
-        {/* Bottom row for text */}
-        <div className="flex-1 flex items-center justify-center text-center px-2 text-sm font-medium">
-          {data.label}
-        </div>
+      <div className="w-full h-full flex items-center justify-center text-center px-2 text-sm font-medium">
+        {data.label}
       </div>
       <Handle
         type="source"
         position={Position.Right}
         className="w-3 h-3 bg-gray-400"
       />
+      {/* Icons positioned at fixed top right corner of the node */}
+      <div className="absolute bottom-14 right-0 transform translate-x-2 -translate-y-2 z-10 pointer-events-auto">
+        <NodeActions
+          nodeId={id}
+          onShowDetails={onShowDetails}
+          onShowConnected={onShowConnected}
+        />
+      </div>
     </div>
   );
 };
