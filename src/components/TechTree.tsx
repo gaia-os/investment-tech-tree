@@ -15,6 +15,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Legend } from './Legend';
 import { LoadingSpinner } from './LoadingSpinner';
 import { GroupSelector } from './GroupSelector';
+import { CustomNode } from './CustomNode';
 import TabPanel from './TabPanel';
 
 const TechTree: React.FC = () => {
@@ -34,6 +35,7 @@ const TechTree: React.FC = () => {
   const [showingRelatedNodes, setShowingRelatedNodes] = useState<string | null>(
     null,
   );
+  const [showOnlyConnected, setShowOnlyConnected] = useState<boolean>(false);
   const { fitView } = useReactFlow();
 
   // Function to find connected nodes and edges
@@ -71,6 +73,7 @@ const TechTree: React.FC = () => {
         groupingMode,
         new Set(), // No longer need expandedGroups since we always show all nodes
         showingRelatedNodes,
+        showOnlyConnected,
       );
       setNodes(() => layoutedNodes);
       setEdges(() => layoutedEdges);
@@ -79,7 +82,7 @@ const TechTree: React.FC = () => {
     };
 
     loadLayout();
-  }, [fitView, groupingMode, showingRelatedNodes]);
+  }, [fitView, groupingMode, showingRelatedNodes, showOnlyConnected]);
 
   // Update node and edge styles based on highlighted elements
   useEffect(() => {
@@ -121,17 +124,35 @@ const TechTree: React.FC = () => {
     );
   }, [highlightedElements]);
 
-  const onNodeClick = useCallback(
-    (_: React.MouseEvent, newSelectedNode: UiNode) => {
-      // Handle regular node clicks - show this node with all its related nodes and edges
-      setSelectedNode(() => ({ ...newSelectedNode }));
-      setShowingRelatedNodes(newSelectedNode.id);
-
-      // Find and set highlighted elements
-      const connected = findConnectedElements(newSelectedNode.id, edges);
-      setHighlightedElements(connected);
+  // Handle showing node details
+  const handleShowDetails = useCallback(
+    (nodeId: string) => {
+      const node = nodes.find((n) => n.id === nodeId);
+      if (node) {
+        setSelectedNode(() => ({ ...node }));
+        setShowingRelatedNodes(null); // Don't filter nodes, just show details
+        setShowOnlyConnected(false); // Show all nodes
+        setHighlightedElements({ nodeIds: new Set(), edgeIds: new Set() }); // Clear highlights
+      }
     },
-    [findConnectedElements, edges],
+    [nodes],
+  );
+
+  // Handle showing connected nodes only
+  const handleShowConnected = useCallback(
+    (nodeId: string) => {
+      const node = nodes.find((n) => n.id === nodeId);
+      if (node) {
+        setSelectedNode(() => ({ ...node }));
+        setShowingRelatedNodes(nodeId);
+        setShowOnlyConnected(true); // Show only connected nodes
+
+        // Find and set highlighted elements
+        const connected = findConnectedElements(nodeId, edges);
+        setHighlightedElements(connected);
+      }
+    },
+    [nodes, edges, findConnectedElements],
   );
 
   // Handle grouping mode changes
@@ -139,7 +160,16 @@ const TechTree: React.FC = () => {
     setGroupingMode(mode);
     setSelectedNode(undefined); // Clear selection
     setShowingRelatedNodes(null); // Clear related nodes
+    setShowOnlyConnected(false); // Show all nodes
     setHighlightedElements({ nodeIds: new Set(), edgeIds: new Set() }); // Clear highlights
+  }, []);
+
+  // Handle reset to show all nodes
+  const handleReset = useCallback(() => {
+    setSelectedNode(undefined);
+    setShowingRelatedNodes(null);
+    setShowOnlyConnected(false);
+    setHighlightedElements({ nodeIds: new Set(), edgeIds: new Set() });
   }, []);
 
   if (isLoading) return <LoadingSpinner />;
@@ -150,14 +180,24 @@ const TechTree: React.FC = () => {
         <GroupSelector
           currentMode={groupingMode}
           onModeChange={handleGroupingModeChange}
+          selectedNode={selectedNode}
+          onReset={handleReset}
         />
         <ReactFlow
           nodes={nodes}
           edges={edges}
+          nodeTypes={{
+            default: (props) => (
+              <CustomNode
+                {...props}
+                onShowDetails={handleShowDetails}
+                onShowConnected={handleShowConnected}
+              />
+            ),
+          }}
           onNodesChange={undefined}
           onEdgesChange={undefined}
           onConnect={undefined}
-          onNodeClick={onNodeClick}
           onEdgeClick={undefined}
           onNodeDragStop={undefined}
           draggable={false}

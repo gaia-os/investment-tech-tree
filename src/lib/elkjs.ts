@@ -20,6 +20,7 @@ export const getLayoutedElements = async (
   groupingMode: GroupingMode = 'None',
   expandedGroups: Set<string> = new Set(),
   showingRelatedNodes: string | null = null,
+  showOnlyConnected: boolean = false,
 ): Promise<{
   layoutedNodes: UiNode[];
   layoutedEdges: Edge[];
@@ -40,7 +41,11 @@ export const getLayoutedElements = async (
   // If showing related nodes for a specific node, show that node and all its connections
   // BUT also include other nodes of the selected grouping category
   if (showingRelatedNodes) {
-    return getRelatedNodesLayoutWithGrouping(showingRelatedNodes, groupingMode);
+    return getRelatedNodesLayoutWithGrouping(
+      showingRelatedNodes,
+      groupingMode,
+      showOnlyConnected,
+    );
   }
 
   // Filter nodes to only include the grouping type
@@ -153,6 +158,7 @@ export const getLayoutedElements = async (
 const getRelatedNodesLayoutWithGrouping = async (
   selectedNodeId: string,
   groupingMode: GroupingMode,
+  showOnlyConnected: boolean = false,
 ) => {
   // Convert DATA nodes to UiNodes first
   const allUiNodes = DATA.nodes.map((node) => ({
@@ -183,13 +189,15 @@ const getRelatedNodesLayoutWithGrouping = async (
     }
   });
 
-  // Also include all other nodes of the same grouping category
-  const nodesOfGroupingType = allUiNodes.filter(
-    (node) => node.data.nodeLabel === groupingMode,
-  );
-  nodesOfGroupingType.forEach((node) => {
-    connectedNodeIds.add(node.id);
-  });
+  // Also include all other nodes of the same grouping category (only if not showing only connected)
+  if (!showOnlyConnected) {
+    const nodesOfGroupingType = allUiNodes.filter(
+      (node) => node.data.nodeLabel === groupingMode,
+    );
+    nodesOfGroupingType.forEach((node) => {
+      connectedNodeIds.add(node.id);
+    });
+  }
 
   // Filter to show connected nodes and nodes of the same category
   const visibleNodes = allUiNodes
@@ -211,6 +219,11 @@ const getRelatedNodesLayoutWithGrouping = async (
     // Show edge if it's connected to the selected node OR if it's between nodes of the same category
     const isConnectedToSelected = connectedEdgeIds.has(edge.id);
     const isBetweenSameCategory = sourceVisible && targetVisible;
+
+    // If showing only connected nodes, only show edges connected to the selected node
+    if (showOnlyConnected) {
+      return isConnectedToSelected;
+    }
 
     return isConnectedToSelected || isBetweenSameCategory;
   });
