@@ -6,7 +6,7 @@ import {
   GroupingMode,
   GroupNode,
 } from '@/lib/types';
-import { Edge, MarkerType } from '@xyflow/react';
+import { Edge, MarkerType, Position } from '@xyflow/react';
 import ELK from 'elkjs/lib/elk.bundled.js';
 
 const elk = new ELK();
@@ -16,18 +16,45 @@ const nodeHeight = 80;
 const groupNodeWidth = 200;
 const groupNodeHeight = 60;
 
+// Helper function to filter nodes based on search term using regex
+const filterNodesBySearch = (nodes: UiNode[], searchTerm: string): UiNode[] => {
+  if (!searchTerm.trim()) {
+    return nodes;
+  }
+
+  try {
+    const regex = new RegExp(searchTerm, 'i'); // Case-insensitive regex
+    return nodes.filter((node) => {
+      const label = node.data?.label || '';
+      return regex.test(label);
+    });
+  } catch (error) {
+    // If regex is invalid, fall back to simple string matching
+    const searchLower = searchTerm.toLowerCase();
+    return nodes.filter((node) => {
+      const label = node.data?.label || '';
+      return label.toLowerCase().includes(searchLower);
+    });
+  }
+};
+
 export const getLayoutedElements = async (
   groupingMode: GroupingMode = 'None',
   expandedGroups: Set<string> = new Set(),
   showingRelatedNodes: string | null = null,
   showOnlyConnected: boolean = false,
+  searchTerm: string = '',
 ): Promise<{
   layoutedNodes: UiNode[];
   layoutedEdges: Edge[];
 }> => {
   // If no grouping, use original logic
   if (groupingMode === 'None') {
-    return getUnGroupedLayout(showingRelatedNodes, showOnlyConnected);
+    return getUnGroupedLayout(
+      showingRelatedNodes,
+      showOnlyConnected,
+      searchTerm,
+    );
   }
 
   // Convert DATA nodes to UiNodes first
@@ -45,6 +72,7 @@ export const getLayoutedElements = async (
       showingRelatedNodes,
       groupingMode,
       showOnlyConnected,
+      searchTerm,
     );
   }
 
@@ -53,18 +81,21 @@ export const getLayoutedElements = async (
     (node) => node.data.nodeLabel === groupingMode,
   );
 
+  // Apply search filter to the grouped nodes
+  const filteredNodes = filterNodesBySearch(nodesOfGroupingType, searchTerm);
+
   // Always show all nodes of the selected type directly (Issue 1 fix)
   const visibleNodes: UiNode[] = [];
   const visibleEdges: Edge[] = [];
 
-  // Add all nodes of the grouping type directly
-  nodesOfGroupingType.forEach((node) => {
+  // Add all filtered nodes of the grouping type directly
+  filteredNodes.forEach((node) => {
     visibleNodes.push({
       ...node,
       width: nodeWidth,
       height: nodeHeight,
-      targetPosition: 'left',
-      sourcePosition: 'right',
+      targetPosition: Position.Left,
+      sourcePosition: Position.Right,
     });
   });
 
@@ -159,6 +190,7 @@ const getRelatedNodesLayoutWithGrouping = async (
   selectedNodeId: string,
   groupingMode: GroupingMode,
   showOnlyConnected: boolean = false,
+  searchTerm: string = '',
 ) => {
   // Convert DATA nodes to UiNodes first
   const allUiNodes = DATA.nodes.map((node) => ({
@@ -200,15 +232,23 @@ const getRelatedNodesLayoutWithGrouping = async (
   }
 
   // Filter to show connected nodes and nodes of the same category
-  const visibleNodes = allUiNodes
-    .filter((node) => connectedNodeIds.has(node.id))
-    .map((node) => ({
-      ...node,
-      width: nodeWidth,
-      height: nodeHeight,
-      targetPosition: 'left',
-      sourcePosition: 'right',
-    }));
+  const connectedNodes = allUiNodes.filter((node) =>
+    connectedNodeIds.has(node.id),
+  );
+
+  // Apply search filter to connected nodes
+  const filteredConnectedNodes = filterNodesBySearch(
+    connectedNodes,
+    searchTerm,
+  );
+
+  const visibleNodes = filteredConnectedNodes.map((node) => ({
+    ...node,
+    width: nodeWidth,
+    height: nodeHeight,
+    targetPosition: 'left',
+    sourcePosition: 'right',
+  }));
 
   // Filter to show connected edges and edges between nodes of the same category
   const visibleNodeIds = new Set(visibleNodes.map((n) => n.id));
@@ -332,8 +372,8 @@ const getRelatedNodesLayout = async (selectedNodeId: string) => {
       ...node,
       width: nodeWidth,
       height: nodeHeight,
-      targetPosition: 'left',
-      sourcePosition: 'right',
+      targetPosition: Position.Left,
+      sourcePosition: Position.Right,
     }));
 
   // Filter to show only connected edges
@@ -411,6 +451,7 @@ const getRelatedNodesLayout = async (selectedNodeId: string) => {
 const getUnGroupedLayout = async (
   showingRelatedNodes: string | null = null,
   showOnlyConnected: boolean = false,
+  searchTerm: string = '',
 ) => {
   // Convert DATA nodes to UiNodes first
   const allUiNodes = DATA.nodes.map((node) => ({
@@ -420,8 +461,16 @@ const getUnGroupedLayout = async (
     },
   })) as UiNode[];
 
-  let visibleNodes = allUiNodes;
-  let visibleEdges = DATA.edges;
+  // Apply search filter first
+  let visibleNodes = filterNodesBySearch(allUiNodes, searchTerm);
+
+  // Filter edges to only include edges between visible nodes
+  const visibleNodeIds = new Set(visibleNodes.map((node) => node.id));
+  let visibleEdges = DATA.edges.filter((edge) => {
+    const sourceVisible = visibleNodeIds.has(edge.source);
+    const targetVisible = visibleNodeIds.has(edge.target);
+    return sourceVisible && targetVisible;
+  });
 
   // If showing related nodes, filter to connected nodes only
   if (showingRelatedNodes) {
@@ -431,8 +480,8 @@ const getUnGroupedLayout = async (
     // Add the selected node itself
     connectedNodeIds.add(showingRelatedNodes);
 
-    // Find all edges connected to this node
-    DATA.edges.forEach((edge) => {
+    // Find all edges connected to this node (from the already filtered edges)
+    visibleEdges.forEach((edge) => {
       if (
         edge.source === showingRelatedNodes ||
         edge.target === showingRelatedNodes
@@ -450,7 +499,7 @@ const getUnGroupedLayout = async (
 
     // Filter to show only connected nodes
     visibleNodes = allUiNodes.filter((node) => connectedNodeIds.has(node.id));
-    visibleEdges = DATA.edges.filter((edge) => connectedEdgeIds.has(edge.id));
+    visibleEdges = visibleEdges.filter((edge) => connectedEdgeIds.has(edge.id));
   }
 
   const graph = {
@@ -463,8 +512,8 @@ const getUnGroupedLayout = async (
       ...node,
       width: nodeWidth,
       height: nodeHeight,
-      targetPosition: 'left',
-      sourcePosition: 'right',
+      targetPosition: Position.Left,
+      sourcePosition: Position.Right,
     })),
     edges: visibleEdges.map((edge) => ({
       id: `${edge.source}-${edge.target}`,

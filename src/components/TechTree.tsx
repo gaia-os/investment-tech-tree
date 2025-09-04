@@ -36,6 +36,8 @@ const TechTree: React.FC = () => {
     null,
   );
   const [showOnlyConnected, setShowOnlyConnected] = useState<boolean>(false);
+  const [searchInput, setSearchInput] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const { fitView } = useReactFlow();
 
   // Function to find connected nodes and edges
@@ -67,6 +69,10 @@ const TechTree: React.FC = () => {
   );
 
   useEffect(() => {
+    setSearchTerm(searchInput);
+  }, [searchInput, searchTerm]);
+
+  useEffect(() => {
     const loadLayout = async () => {
       setIsLoading(true);
       const { layoutedNodes, layoutedEdges } = await getLayoutedElements(
@@ -74,6 +80,7 @@ const TechTree: React.FC = () => {
         new Set(), // No longer need expandedGroups since we always show all nodes
         showingRelatedNodes,
         showOnlyConnected,
+        searchTerm,
       );
       setNodes(() => layoutedNodes);
       setEdges(() => layoutedEdges);
@@ -82,7 +89,13 @@ const TechTree: React.FC = () => {
     };
 
     loadLayout();
-  }, [fitView, groupingMode, showingRelatedNodes, showOnlyConnected]);
+  }, [
+    fitView,
+    groupingMode,
+    showingRelatedNodes,
+    showOnlyConnected,
+    searchTerm,
+  ]);
 
   // Update node and edge styles based on highlighted elements
   useEffect(() => {
@@ -130,12 +143,13 @@ const TechTree: React.FC = () => {
       const node = nodes.find((n) => n.id === nodeId);
       if (node) {
         setSelectedNode(() => ({ ...node }));
+        // Clear search when showing node details to avoid conflicts
         // Don't change the current view state - maintain connected nodes if they're currently shown
         const connected = findConnectedElements(nodeId, edges);
         setHighlightedElements(connected);
       }
     },
-    [nodes],
+    [nodes, edges, findConnectedElements],
   );
 
   // Handle showing connected nodes only
@@ -146,11 +160,14 @@ const TechTree: React.FC = () => {
         setSelectedNode(() => ({ ...node }));
         setShowingRelatedNodes(nodeId);
         setShowOnlyConnected(true); // Show only connected nodes
+        // Clear search when showing connected nodes to avoid conflicts
+        setSearchInput('');
+        setSearchTerm('');
         // Find and set highlighted elements
         setHighlightedElements({ nodeIds: new Set(), edgeIds: new Set() }); // Clear highlights
       }
     },
-    [nodes, edges, findConnectedElements],
+    [nodes],
   );
 
   // Handle grouping mode changes
@@ -167,10 +184,20 @@ const TechTree: React.FC = () => {
     setSelectedNode(undefined);
     setShowingRelatedNodes(null);
     setShowOnlyConnected(false);
+    setSearchInput('');
+    setSearchTerm('');
     setHighlightedElements({ nodeIds: new Set(), edgeIds: new Set() });
   }, []);
 
-  if (isLoading) return <LoadingSpinner />;
+  // Handle search input changes
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchInput(value);
+    // Clear selection when searching
+    setSelectedNode(undefined);
+    setShowingRelatedNodes(null);
+    setShowOnlyConnected(false);
+    setHighlightedElements({ nodeIds: new Set(), edgeIds: new Set() });
+  }, []);
 
   return (
     <div className="w-full h-screen bg-gray-100 flex">
@@ -181,36 +208,46 @@ const TechTree: React.FC = () => {
           selectedNode={selectedNode}
           showingConnectedNodes={showingRelatedNodes !== null}
           onReset={handleReset}
+          searchInput={searchInput}
+          onSearchChange={handleSearchChange}
         />
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          nodeTypes={{
-            default: (props) => (
-              <CustomNode
-                {...props}
-                onShowDetails={handleShowDetails}
-                onShowConnected={handleShowConnected}
-              />
-            ),
-          }}
-          onNodesChange={undefined}
-          onEdgesChange={undefined}
-          onConnect={undefined}
-          onEdgeClick={undefined}
-          onNodeDragStop={undefined}
-          draggable={false}
-          nodesConnectable={false}
-          colorMode={'light'}
-          fitView
-          fitViewOptions={{ padding: 0.5 }}
-          minZoom={0.3}
-        >
-          <Background bgColor="white" variant={BackgroundVariant.Dots} />
-          {/* <MiniMap /> */}
-          <Controls showInteractive={false} />
-        </ReactFlow>
-        <Legend />
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <LoadingSpinner />
+          </div>
+        ) : (
+          <>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              nodeTypes={{
+                default: (props) => (
+                  <CustomNode
+                    {...props}
+                    onShowDetails={handleShowDetails}
+                    onShowConnected={handleShowConnected}
+                  />
+                ),
+              }}
+              onNodesChange={undefined}
+              onEdgesChange={undefined}
+              onConnect={undefined}
+              onEdgeClick={undefined}
+              onNodeDragStop={undefined}
+              draggable={false}
+              nodesConnectable={false}
+              colorMode={'light'}
+              fitView
+              fitViewOptions={{ padding: 0.5 }}
+              minZoom={0.3}
+            >
+              <Background bgColor="white" variant={BackgroundVariant.Dots} />
+              {/* <MiniMap /> */}
+              <Controls showInteractive={false} />
+            </ReactFlow>
+            <Legend />
+          </>
+        )}
       </div>
       <div className="w-2/4 bg-white shadow-lg">
         <TabPanel selectedNode={selectedNode} />
