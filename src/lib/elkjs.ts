@@ -12,7 +12,7 @@ import ELK from 'elkjs/lib/elk.bundled.js';
 const elk = new ELK();
 
 const nodeWidth = 150;
-const nodeHeight = 50;
+const nodeHeight = 120;
 const groupNodeWidth = 200;
 const groupNodeHeight = 60;
 

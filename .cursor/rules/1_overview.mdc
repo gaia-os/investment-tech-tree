@@ -68,8 +68,8 @@ The application provides intuitive node interaction through always-visible actio
   - **Info Icon** (ℹ️): Shows node details in the side panel while maintaining current graph view
   - **Grid Icon** (⊞): Shows only the selected node and its connected nodes/edge
 - **GroupSelector Behavior**:
-  - Shows normal grouping options when no node is selected
-  - Shows only a reset button when a node is selected
+  - Shows normal grouping options when no node is selected or when showing node details
+  - Shows only a reset button when connected nodes are being displayed
   - Reset button returns to full graph view and clears selection
 - **Filtering Logic**:
   - "Show Details" maintains current graph view (connected nodes or full view) with node details

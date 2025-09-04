@@ -180,6 +180,7 @@ const TechTree: React.FC = () => {
           currentMode={groupingMode}
           onModeChange={handleGroupingModeChange}
           selectedNode={selectedNode}
+          showingConnectedNodes={showingRelatedNodes !== null}
           onReset={handleReset}
         />
         <ReactFlow
