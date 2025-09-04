@@ -25,7 +25,7 @@ export const NodeActions: React.FC<NodeActionsProps> = ({
   };
 
   return (
-    <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+    <div className="absolute top-1 right-1 flex gap-1 opacity-100">
       <Button
         variant="ghost"
         size="sm"

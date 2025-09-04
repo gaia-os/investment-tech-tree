@@ -27,7 +27,7 @@ export const getLayoutedElements = async (
 }> => {
   // If no grouping, use original logic
   if (groupingMode === 'None') {
-    return getUnGroupedLayout();
+    return getUnGroupedLayout(showingRelatedNodes, showOnlyConnected);
   }
 
   // Convert DATA nodes to UiNodes first
@@ -408,21 +408,65 @@ const getRelatedNodesLayout = async (selectedNodeId: string) => {
 };
 
 // Helper function for ungrouped layout
-const getUnGroupedLayout = async () => {
+const getUnGroupedLayout = async (
+  showingRelatedNodes: string | null = null,
+  showOnlyConnected: boolean = false,
+) => {
+  // Convert DATA nodes to UiNodes first
+  const allUiNodes = DATA.nodes.map((node) => ({
+    ...node,
+    data: {
+      ...node.data,
+    },
+  })) as UiNode[];
+
+  let visibleNodes = allUiNodes;
+  let visibleEdges = DATA.edges;
+
+  // If showing related nodes, filter to connected nodes only
+  if (showingRelatedNodes) {
+    const connectedNodeIds = new Set<string>();
+    const connectedEdgeIds = new Set<string>();
+
+    // Add the selected node itself
+    connectedNodeIds.add(showingRelatedNodes);
+
+    // Find all edges connected to this node
+    DATA.edges.forEach((edge) => {
+      if (
+        edge.source === showingRelatedNodes ||
+        edge.target === showingRelatedNodes
+      ) {
+        connectedEdgeIds.add(edge.id);
+        // Add connected nodes
+        if (edge.source === showingRelatedNodes) {
+          connectedNodeIds.add(edge.target);
+        }
+        if (edge.target === showingRelatedNodes) {
+          connectedNodeIds.add(edge.source);
+        }
+      }
+    });
+
+    // Filter to show only connected nodes
+    visibleNodes = allUiNodes.filter((node) => connectedNodeIds.has(node.id));
+    visibleEdges = DATA.edges.filter((edge) => connectedEdgeIds.has(edge.id));
+  }
+
   const graph = {
     id: 'root',
     layoutOptions: {
       'elk.algorithm': 'layered',
       'elk.layered.spacing.nodeNodeBetweenLayers': '100',
     },
-    children: DATA.nodes.map((node) => ({
+    children: visibleNodes.map((node) => ({
       ...node,
       width: nodeWidth,
       height: nodeHeight,
       targetPosition: 'left',
       sourcePosition: 'right',
     })),
-    edges: DATA.edges.map((edge) => ({
+    edges: visibleEdges.map((edge) => ({
       id: `${edge.source}-${edge.target}`,
       sources: [edge.source],
       targets: [edge.target],
@@ -448,13 +492,18 @@ const getUnGroupedLayout = async () => {
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
+        // Highlight the selected node
+        borderWidth: node.id === showingRelatedNodes ? '3px' : '1px',
+        boxShadow:
+          node.id === showingRelatedNodes ? '0 0 0 2px #f97316' : 'none',
+        fontWeight: node.id === showingRelatedNodes ? 'bold' : 'normal',
       },
     } as UiNode;
 
     return newNode;
   });
 
-  const layoutedEdges = DATA.edges.map((edge) => {
+  const layoutedEdges = visibleEdges.map((edge) => {
     return {
       ...edge,
       style: {

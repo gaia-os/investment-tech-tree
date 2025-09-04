@@ -60,6 +60,23 @@ Each node includes TRL tracking, descriptions, and category classification.
 - XSS protection via DOMPurify for AI responses
 - Context includes full tech tree data for informed responses
 
+## Node Interaction Features
+
+The application provides intuitive node interaction through always-visible action icons:
+
+- **Node Actions**: Each node displays two action icons in the top-right corner
+  - **Info Icon** (ℹ️): Shows node details in the side panel while maintaining current graph view
+  - **Grid Icon** (⊞): Shows only the selected node and its connected nodes/edge
+- **GroupSelector Behavior**:
+  - Shows normal grouping options when no node is selected
+  - Shows only a reset button when a node is selected
+  - Reset button returns to full graph view and clears selection
+- **Filtering Logic**:
+  - "Show Details" maintains current graph view (connected nodes or full view) with node details
+  - "Show Connected" filters to show ONLY connected nodes and edges
+  - Connected nodes are highlighted with orange borders and bold text
+  - Works with all grouping modes including "No Grouping"
+
 ## Common Patterns
 
 - Use React Flow for graph interactions
@@ -67,3 +84,4 @@ Each node includes TRL tracking, descriptions, and category classification.
 - Follow Next.js App Router conventions
 - Use Tailwind utility classes for styling
 - Implement responsive design patterns
+- Use custom node components for enhanced interactivity
