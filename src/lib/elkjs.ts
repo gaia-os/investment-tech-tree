@@ -37,38 +37,13 @@ const filterNodesBySearch = (nodes: UiNode[], searchTerm: string): UiNode[] => {
 
 export const getLayoutedElements = async (
   groupingMode: GroupingMode = 'None',
-  showingRelatedNodes: string | null = null,
+  selectedNodeId: string | null = null,
   showOnlyConnected: boolean = false,
   searchTerm: string = '',
 ): Promise<{
   layoutedNodes: UiNode[];
   layoutedEdges: Edge[];
 }> => {
-  // If no grouping, use original logic
-  if (groupingMode === 'None') {
-    return getUnGroupedLayout(showingRelatedNodes, searchTerm);
-  }
-  // If showing related nodes for a specific node, show that node and all its connections
-  if (showingRelatedNodes) {
-    return getRelatedNodesLayoutWithGrouping(
-      showingRelatedNodes,
-      groupingMode,
-      showOnlyConnected,
-      searchTerm,
-    );
-  }
-
-  // Convert DATA nodes to UiNodes first
-  return await getGroupedLayout(groupingMode, searchTerm);
-};
-
-const getRelatedNodesLayoutWithGrouping = async (
-  selectedNodeId: string,
-  groupingMode: GroupingMode,
-  showOnlyConnected: boolean = false,
-  searchTerm: string = '',
-) => {
-  // Convert DATA nodes to UiNodes first
   const allUiNodes = DATA.nodes.map((node) => ({
     ...node,
     data: {
@@ -76,6 +51,32 @@ const getRelatedNodesLayoutWithGrouping = async (
     },
   })) as UiNode[];
 
+  // If no grouping, use original logic
+  if (groupingMode === 'None') {
+    return getUnGroupedLayout(selectedNodeId, searchTerm, allUiNodes);
+  }
+  // If showing related nodes for a specific node, show that node and all its connections
+  if (selectedNodeId) {
+    return getRelatedNodesLayoutWithGrouping(
+      selectedNodeId,
+      groupingMode,
+      showOnlyConnected,
+      searchTerm,
+      allUiNodes,
+    );
+  }
+
+  // Convert DATA nodes to UiNodes first
+  return await getGroupedLayout(groupingMode, searchTerm, allUiNodes);
+};
+
+const getRelatedNodesLayoutWithGrouping = async (
+  selectedNodeId: string,
+  groupingMode: GroupingMode,
+  showOnlyConnected: boolean = false,
+  searchTerm: string = '',
+  allUiNodes: UiNode[],
+) => {
   // Find all connected nodes and edges
   const connectedNodeIds = new Set<string>();
   const connectedEdgeIds = new Set<string>();
@@ -98,7 +99,6 @@ const getRelatedNodesLayoutWithGrouping = async (
   });
 
   // Also include all other nodes of the same grouping category (only if not showing only connected)
-  // Currently showOnlyConnected is always true
   if (!showOnlyConnected) {
     const nodesOfGroupingType = allUiNodes.filter(
       (node) => node.data.nodeLabel === groupingMode,
@@ -153,15 +153,8 @@ const getRelatedNodesLayoutWithGrouping = async (
 const getUnGroupedLayout = async (
   showingRelatedNodes: string | null = null,
   searchTerm: string = '',
+  allUiNodes: UiNode[],
 ) => {
-  // Convert DATA nodes to UiNodes first
-  const allUiNodes = DATA.nodes.map((node) => ({
-    ...node,
-    data: {
-      ...node.data,
-    },
-  })) as UiNode[];
-
   // Apply search filter first
   let visibleNodes = filterNodesBySearch(allUiNodes, searchTerm);
 
@@ -274,14 +267,11 @@ const getUnGroupedLayout = async (
     layoutedEdges,
   };
 };
-const getGroupedLayout = async (groupingMode: string, searchTerm: string) => {
-  const allUiNodes = DATA.nodes.map((node) => ({
-    ...node,
-    data: {
-      ...node.data,
-    },
-  })) as UiNode[];
-
+const getGroupedLayout = async (
+  groupingMode: string,
+  searchTerm: string,
+  allUiNodes: UiNode[],
+) => {
   // Filter nodes to only include the grouping type
   const nodesOfGroupingType = allUiNodes.filter(
     (node) => node.data.nodeLabel === groupingMode,
