@@ -12,8 +12,6 @@ const elk = new ELK();
 
 const nodeWidth = 150;
 const nodeHeight = 80;
-const groupNodeWidth = 200;
-const groupNodeHeight = 60;
 
 // Helper function to filter nodes based on search term using regex
 const filterNodesBySearch = (nodes: UiNode[], searchTerm: string): UiNode[] => {
@@ -50,15 +48,6 @@ export const getLayoutedElements = async (
   if (groupingMode === 'None') {
     return getUnGroupedLayout(showingRelatedNodes, searchTerm);
   }
-
-  // Convert DATA nodes to UiNodes first
-  const allUiNodes = DATA.nodes.map((node) => ({
-    ...node,
-    data: {
-      ...node.data,
-    },
-  })) as UiNode[];
-
   // If showing related nodes for a specific node, show that node and all its connections
   if (showingRelatedNodes) {
     return getRelatedNodesLayoutWithGrouping(
@@ -69,113 +58,8 @@ export const getLayoutedElements = async (
     );
   }
 
-  // Filter nodes to only include the grouping type
-  const nodesOfGroupingType = allUiNodes.filter(
-    (node) => node.data.nodeLabel === groupingMode,
-  );
-
-  // Apply search filter to the grouped nodes
-  const filteredNodes = filterNodesBySearch(nodesOfGroupingType, searchTerm);
-
-  // Always show all nodes of the selected type directly
-  const visibleNodes: UiNode[] = [];
-  const visibleEdges: Edge[] = [];
-
-  // Add all filtered nodes of the grouping type directly
-  filteredNodes.forEach((node) => {
-    visibleNodes.push({
-      ...node,
-      width: nodeWidth,
-      height: nodeHeight,
-      targetPosition: Position.Left,
-      sourcePosition: Position.Right,
-    });
-  });
-
-  // Show edges between nodes of the same type
-  const visibleNodeIds = new Set(visibleNodes.map((n) => n.id));
-  DATA.edges.forEach((edge) => {
-    const sourceVisible = visibleNodeIds.has(edge.source);
-    const targetVisible = visibleNodeIds.has(edge.target);
-
-    // Show edges between visible nodes of the same type
-    if (sourceVisible && targetVisible) {
-      visibleEdges.push(edge);
-    }
-  });
-
-  // Layout the visible nodes
-  const graph = {
-    id: 'root',
-    layoutOptions: {
-      'elk.algorithm': 'layered',
-      'elk.layered.spacing.nodeNodeBetweenLayers': '100',
-    },
-    children: visibleNodes.map((node) => ({
-      ...node,
-    })),
-    edges: visibleEdges.map((edge) => ({
-      id: `${edge.source}-${edge.target}`,
-      sources: [edge.source],
-      targets: [edge.target],
-    })),
-  };
-
-  const layoutedGraph = await elk.layout(graph);
-
-  const layoutedNodes = visibleNodes.map((node) => {
-    const layoutedNode = layoutedGraph.children?.find((n) => n.id === node.id);
-    const isGroupNode = node.data.isGroup;
-
-    const newNode = {
-      ...node,
-      position: {
-        x:
-          (layoutedNode?.x || 0) -
-          (isGroupNode ? groupNodeWidth : nodeWidth) / 2,
-        y:
-          (layoutedNode?.y || 0) -
-          (isGroupNode ? groupNodeHeight : nodeHeight) / 2,
-      },
-      style: {
-        borderColor: isGroupNode
-          ? '#6366f1'
-          : `${LABEL_COLORS_VARIABLES[node.data.nodeLabel as NodeLabel]}`,
-        borderStyle: 'solid',
-        borderRadius: '6px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        fontWeight: isGroupNode ? 'bold' : 'normal',
-        backgroundColor: isGroupNode ? '#f8fafc' : 'white',
-        borderWidth: isGroupNode ? '2px' : '1px',
-      },
-    } as UiNode;
-
-    return newNode;
-  });
-
-  const layoutedEdges = visibleEdges.map((edge) => {
-    return {
-      ...edge,
-      style: {
-        strokeWidth: 1,
-        stroke: '#374151',
-      },
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        width: 20,
-        height: 20,
-        color: '#374151',
-      },
-    };
-  }) as Edge[];
-
-  return {
-    layoutedNodes,
-    layoutedEdges,
-  };
+  // Convert DATA nodes to UiNodes first
+  return await getGroupedLayout(groupingMode, searchTerm);
 };
 
 const getRelatedNodesLayoutWithGrouping = async (
@@ -235,12 +119,12 @@ const getRelatedNodesLayoutWithGrouping = async (
     searchTerm,
   );
 
-  const visibleNodes = filteredConnectedNodes.map((node) => ({
+  const visibleNodes: UiNode[] = filteredConnectedNodes.map((node) => ({
     ...node,
     width: nodeWidth,
     height: nodeHeight,
-    targetPosition: 'left',
-    sourcePosition: 'right',
+    targetPosition: Position.Left,
+    sourcePosition: Position.Right,
   }));
 
   // Filter to show connected edges and edges between nodes of the same category
@@ -262,69 +146,7 @@ const getRelatedNodesLayoutWithGrouping = async (
   });
 
   // Layout the visible nodes
-  const graph = {
-    id: 'root',
-    layoutOptions: {
-      'elk.algorithm': 'layered',
-      'elk.layered.spacing.nodeNodeBetweenLayers': '100',
-    },
-    children: visibleNodes,
-    edges: visibleEdges.map((edge) => ({
-      id: `${edge.source}-${edge.target}`,
-      sources: [edge.source],
-      targets: [edge.target],
-    })),
-  };
-
-  const layoutedGraph = await elk.layout(graph);
-
-  const layoutedNodes = visibleNodes.map((node) => {
-    const layoutedNode = layoutedGraph.children?.find((n) => n.id === node.id);
-
-    const newNode = {
-      ...node,
-      position: {
-        x: (layoutedNode?.x || 0) - nodeWidth / 2,
-        y: (layoutedNode?.y || 0) - nodeHeight / 2,
-      },
-      style: {
-        borderColor: `${LABEL_COLORS_VARIABLES[node.data.nodeLabel as NodeLabel]}`,
-        borderStyle: 'solid',
-        borderRadius: '6px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        // Highlight the selected node
-        borderWidth: node.id === selectedNodeId ? '3px' : '1px',
-        boxShadow: node.id === selectedNodeId ? '0 0 0 2px #f97316' : 'none',
-        fontWeight: node.id === selectedNodeId ? 'bold' : 'normal',
-      },
-    } as UiNode;
-
-    return newNode;
-  });
-
-  const layoutedEdges = visibleEdges.map((edge) => {
-    return {
-      ...edge,
-      style: {
-        strokeWidth: 1,
-        stroke: '#374151',
-      },
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        width: 20,
-        height: 20,
-        color: '#374151',
-      },
-    };
-  }) as Edge[];
-
-  return {
-    layoutedNodes,
-    layoutedEdges,
-  };
+  return await layoutGraph(visibleNodes, visibleEdges, selectedNodeId);
 };
 
 // Helper function for ungrouped layout
@@ -452,3 +274,118 @@ const getUnGroupedLayout = async (
     layoutedEdges,
   };
 };
+const getGroupedLayout = async (groupingMode: string, searchTerm: string) => {
+  const allUiNodes = DATA.nodes.map((node) => ({
+    ...node,
+    data: {
+      ...node.data,
+    },
+  })) as UiNode[];
+
+  // Filter nodes to only include the grouping type
+  const nodesOfGroupingType = allUiNodes.filter(
+    (node) => node.data.nodeLabel === groupingMode,
+  );
+
+  // Apply search filter to the grouped nodes
+  const filteredNodes = filterNodesBySearch(nodesOfGroupingType, searchTerm);
+
+  // Always show all nodes of the selected type directly
+  const visibleNodes: UiNode[] = [];
+  const visibleEdges: Edge[] = [];
+
+  // Add all filtered nodes of the grouping type directly
+  filteredNodes.forEach((node) => {
+    visibleNodes.push({
+      ...node,
+      width: nodeWidth,
+      height: nodeHeight,
+      targetPosition: Position.Left,
+      sourcePosition: Position.Right,
+    });
+  });
+
+  // Show edges between nodes of the same type
+  const visibleNodeIds = new Set(visibleNodes.map((n) => n.id));
+  DATA.edges.forEach((edge) => {
+    const sourceVisible = visibleNodeIds.has(edge.source);
+    const targetVisible = visibleNodeIds.has(edge.target);
+
+    // Show edges between visible nodes of the same type
+    if (sourceVisible && targetVisible) {
+      visibleEdges.push(edge);
+    }
+  });
+
+  return await layoutGraph(visibleNodes, visibleEdges);
+};
+
+async function layoutGraph(
+  visibleNodes: UiNode[],
+  visibleEdges: Edge[],
+  selectedNodeId?: string,
+) {
+  const graph = {
+    id: 'root',
+    layoutOptions: {
+      'elk.algorithm': 'layered',
+      'elk.layered.spacing.nodeNodeBetweenLayers': '100',
+    },
+    children: visibleNodes,
+    edges: visibleEdges.map((edge) => ({
+      id: `${edge.source}-${edge.target}`,
+      sources: [edge.source],
+      targets: [edge.target],
+    })),
+  };
+
+  const layoutedGraph = await elk.layout(graph);
+
+  const layoutedNodes = visibleNodes.map((node) => {
+    const layoutedNode = layoutedGraph.children?.find((n) => n.id === node.id);
+
+    const newNode = {
+      ...node,
+      position: {
+        x: (layoutedNode?.x || 0) - nodeWidth / 2,
+        y: (layoutedNode?.y || 0) - nodeHeight / 2,
+      },
+      style: {
+        borderColor: `${LABEL_COLORS_VARIABLES[node.data.nodeLabel as NodeLabel]}`,
+        borderStyle: 'solid',
+        borderRadius: '6px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        // Highlight the selected node
+        borderWidth: node.id === selectedNodeId ? '3px' : '1px',
+        boxShadow: node.id === selectedNodeId ? '0 0 0 2px #f97316' : 'none',
+        fontWeight: node.id === selectedNodeId ? 'bold' : 'normal',
+      },
+    } as UiNode;
+
+    return newNode;
+  });
+
+  const layoutedEdges = visibleEdges.map((edge) => {
+    return {
+      ...edge,
+      style: {
+        strokeWidth: 1,
+        stroke: '#374151',
+      },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        width: 20,
+        height: 20,
+        color: '#374151',
+      },
+    };
+  }) as Edge[];
+
+  return {
+    layoutedNodes,
+    layoutedEdges,
+  };
+}
