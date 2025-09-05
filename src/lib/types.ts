@@ -56,6 +56,7 @@ export interface InvestTechTreeNode {
   trl_projected_5_10_years?: string;
   references: string[];
   detailedDescription?: string;
+  subTypeOf?: string;
 }
 
 export interface InvestTechTreeEdge {
