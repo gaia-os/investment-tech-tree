@@ -77,7 +77,6 @@ const TechTree: React.FC = () => {
       setIsLoading(true);
       const { layoutedNodes, layoutedEdges } = await getLayoutedElements(
         groupingMode,
-        new Set(), // No longer need expandedGroups since we always show all nodes
         showingRelatedNodes,
         showOnlyConnected,
         searchTerm,
@@ -143,8 +142,6 @@ const TechTree: React.FC = () => {
       const node = nodes.find((n) => n.id === nodeId);
       if (node) {
         setSelectedNode(() => ({ ...node }));
-        // Clear search when showing node details to avoid conflicts
-        // Don't change the current view state - maintain connected nodes if they're currently shown
         const connected = findConnectedElements(nodeId, edges);
         setHighlightedElements(connected);
       }

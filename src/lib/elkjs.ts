@@ -4,7 +4,6 @@ import {
   NodeLabel,
   UiNode,
   GroupingMode,
-  GroupNode,
 } from '@/lib/types';
 import { Edge, MarkerType, Position } from '@xyflow/react';
 import ELK from 'elkjs/lib/elk.bundled.js';
@@ -40,7 +39,6 @@ const filterNodesBySearch = (nodes: UiNode[], searchTerm: string): UiNode[] => {
 
 export const getLayoutedElements = async (
   groupingMode: GroupingMode = 'None',
-  expandedGroups: Set<string> = new Set(),
   showingRelatedNodes: string | null = null,
   showOnlyConnected: boolean = false,
   searchTerm: string = '',
@@ -50,11 +48,7 @@ export const getLayoutedElements = async (
 }> => {
   // If no grouping, use original logic
   if (groupingMode === 'None') {
-    return getUnGroupedLayout(
-      showingRelatedNodes,
-      showOnlyConnected,
-      searchTerm,
-    );
+    return getUnGroupedLayout(showingRelatedNodes, searchTerm);
   }
 
   // Convert DATA nodes to UiNodes first
@@ -66,7 +60,6 @@ export const getLayoutedElements = async (
   })) as UiNode[];
 
   // If showing related nodes for a specific node, show that node and all its connections
-  // BUT also include other nodes of the selected grouping category
   if (showingRelatedNodes) {
     return getRelatedNodesLayoutWithGrouping(
       showingRelatedNodes,
@@ -84,7 +77,7 @@ export const getLayoutedElements = async (
   // Apply search filter to the grouped nodes
   const filteredNodes = filterNodesBySearch(nodesOfGroupingType, searchTerm);
 
-  // Always show all nodes of the selected type directly (Issue 1 fix)
+  // Always show all nodes of the selected type directly
   const visibleNodes: UiNode[] = [];
   const visibleEdges: Edge[] = [];
 
@@ -185,7 +178,6 @@ export const getLayoutedElements = async (
   };
 };
 
-// Helper function for showing related nodes layout with grouping preservation (Issue 2 fix)
 const getRelatedNodesLayoutWithGrouping = async (
   selectedNodeId: string,
   groupingMode: GroupingMode,
@@ -222,6 +214,7 @@ const getRelatedNodesLayoutWithGrouping = async (
   });
 
   // Also include all other nodes of the same grouping category (only if not showing only connected)
+  // Currently showOnlyConnected is always true
   if (!showOnlyConnected) {
     const nodesOfGroupingType = allUiNodes.filter(
       (node) => node.data.nodeLabel === groupingMode,
@@ -334,123 +327,9 @@ const getRelatedNodesLayoutWithGrouping = async (
   };
 };
 
-// Helper function for showing related nodes layout (original function kept for reference)
-const getRelatedNodesLayout = async (selectedNodeId: string) => {
-  // Convert DATA nodes to UiNodes first
-  const allUiNodes = DATA.nodes.map((node) => ({
-    ...node,
-    data: {
-      ...node.data,
-    },
-  })) as UiNode[];
-
-  // Find all connected nodes and edges
-  const connectedNodeIds = new Set<string>();
-  const connectedEdgeIds = new Set<string>();
-
-  // Add the selected node itself
-  connectedNodeIds.add(selectedNodeId);
-
-  // Find all edges connected to this node
-  DATA.edges.forEach((edge) => {
-    if (edge.source === selectedNodeId || edge.target === selectedNodeId) {
-      connectedEdgeIds.add(edge.id);
-      // Add connected nodes
-      if (edge.source === selectedNodeId) {
-        connectedNodeIds.add(edge.target);
-      }
-      if (edge.target === selectedNodeId) {
-        connectedNodeIds.add(edge.source);
-      }
-    }
-  });
-
-  // Filter to show only connected nodes
-  const visibleNodes = allUiNodes
-    .filter((node) => connectedNodeIds.has(node.id))
-    .map((node) => ({
-      ...node,
-      width: nodeWidth,
-      height: nodeHeight,
-      targetPosition: Position.Left,
-      sourcePosition: Position.Right,
-    }));
-
-  // Filter to show only connected edges
-  const visibleEdges = DATA.edges.filter((edge) =>
-    connectedEdgeIds.has(edge.id),
-  );
-
-  // Layout the visible nodes
-  const graph = {
-    id: 'root',
-    layoutOptions: {
-      'elk.algorithm': 'layered',
-      'elk.layered.spacing.nodeNodeBetweenLayers': '100',
-    },
-    children: visibleNodes,
-    edges: visibleEdges.map((edge) => ({
-      id: `${edge.source}-${edge.target}`,
-      sources: [edge.source],
-      targets: [edge.target],
-    })),
-  };
-
-  const layoutedGraph = await elk.layout(graph);
-
-  const layoutedNodes = visibleNodes.map((node) => {
-    const layoutedNode = layoutedGraph.children?.find((n) => n.id === node.id);
-
-    const newNode = {
-      ...node,
-      position: {
-        x: (layoutedNode?.x || 0) - nodeWidth / 2,
-        y: (layoutedNode?.y || 0) - nodeHeight / 2,
-      },
-      style: {
-        borderColor: `${LABEL_COLORS_VARIABLES[node.data.nodeLabel as NodeLabel]}`,
-        borderStyle: 'solid',
-        borderRadius: '6px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        // Highlight the selected node
-        borderWidth: node.id === selectedNodeId ? '3px' : '1px',
-        boxShadow: node.id === selectedNodeId ? '0 0 0 2px #f97316' : 'none',
-        fontWeight: node.id === selectedNodeId ? 'bold' : 'normal',
-      },
-    } as UiNode;
-
-    return newNode;
-  });
-
-  const layoutedEdges = visibleEdges.map((edge) => {
-    return {
-      ...edge,
-      style: {
-        strokeWidth: 1,
-        stroke: '#374151',
-      },
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        width: 20,
-        height: 20,
-        color: '#374151',
-      },
-    };
-  }) as Edge[];
-
-  return {
-    layoutedNodes,
-    layoutedEdges,
-  };
-};
-
 // Helper function for ungrouped layout
 const getUnGroupedLayout = async (
   showingRelatedNodes: string | null = null,
-  showOnlyConnected: boolean = false,
   searchTerm: string = '',
 ) => {
   // Convert DATA nodes to UiNodes first
